@@ -161,13 +161,16 @@ export function Hero() {
           <span className="hero-scatter-text">HAS A VISION.</span>
         </div>
 
-        {/* Left numbered nav */}
+        {/* Spacer above nav */}
+        <div style={{ flex: 1 }} />
+
+        {/* Left numbered nav — vertically centered between Row 1 and Row 2 */}
         <nav
           className="hero-side-nav"
           style={{
             position: 'relative', zIndex: 10,
             display: 'flex', flexDirection: 'column', gap: 8,
-            marginTop: 'clamp(10px, 2vh, 20px)', maxWidth: 240,
+            maxWidth: 240,
             animation: 'heroFadeIn 0.8s ease both 0.4s',
           }}
         >
