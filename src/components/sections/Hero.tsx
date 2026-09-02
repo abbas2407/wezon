@@ -1,6 +1,21 @@
 import React from 'react';
 import { AnimatedHeroBackground } from './AnimatedHeroBackground';
 
+// Small "crab" bracket marker used in the bottom corners
+const CrabMark = () => (
+  <svg width="26" height="14" viewBox="0 0 26 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square">
+    {/* left claw */}
+    <path d="M1 2 L1 8 L4 8 L4 12" />
+    <path d="M1 8 L5 8" />
+    {/* right claw */}
+    <path d="M25 2 L25 8 L22 8 L22 12" />
+    <path d="M25 8 L21 8" />
+    {/* body cross */}
+    <path d="M8 4 L18 4 M8 8 L18 8" />
+    <path d="M10 2 L10 10 M16 2 L16 10" />
+  </svg>
+);
+
 const navItems = [
   { id: '01', label: 'HOME', href: '#hero' },
   { id: '02', label: 'SERVICES', href: '#system' },
@@ -199,14 +214,14 @@ export function Hero() {
           <span className="hero-scatter-text">AROUND IT.</span>
         </div>
 
-        {/* Bottom scroll markers */}
+        {/* Bottom corner "crab" markers */}
         <div style={{
           position: 'absolute', left: 'clamp(24px, 5vw, 64px)', right: 'clamp(24px, 5vw, 64px)',
           bottom: 24, zIndex: 10, display: 'flex', justifyContent: 'space-between',
-          color: 'rgba(255,255,255,0.35)', fontSize: 18, letterSpacing: '0.2em',
+          color: 'rgba(255,255,255,0.55)',
         }}>
-          <span>✕</span>
-          <span>✕</span>
+          <CrabMark />
+          <CrabMark />
         </div>
       </section>
     </>
