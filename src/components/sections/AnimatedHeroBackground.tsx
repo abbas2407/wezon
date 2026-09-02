@@ -23,8 +23,8 @@ export const AnimatedHeroBackground: React.FC = () => {
           left: '50%',
           top: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'min(38vmin, 420px)',
-          height: 'min(38vmin, 420px)',
+          width: 'min(62vmin, 660px)',
+          height: 'min(62vmin, 660px)',
         }}
       >
         <LiquidChrome />

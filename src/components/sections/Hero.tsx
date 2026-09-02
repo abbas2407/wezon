@@ -1,18 +1,22 @@
 import React from 'react';
 import { AnimatedHeroBackground } from './AnimatedHeroBackground';
 
-// Small "crab" bracket marker used in the bottom corners
+// "Crab" marker for bottom corners — body + two claws + crosshair
 const CrabMark = () => (
-  <svg width="26" height="14" viewBox="0 0 26 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="square">
+  <svg width="46" height="30" viewBox="0 0 46 30" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
     {/* left claw */}
-    <path d="M1 2 L1 8 L4 8 L4 12" />
-    <path d="M1 8 L5 8" />
+    <path d="M2 6 L2 16 L8 16" />
+    <path d="M2 12 L6 12" />
     {/* right claw */}
-    <path d="M25 2 L25 8 L22 8 L22 12" />
-    <path d="M25 8 L21 8" />
-    {/* body cross */}
-    <path d="M8 4 L18 4 M8 8 L18 8" />
-    <path d="M10 2 L10 10 M16 2 L16 10" />
+    <path d="M44 6 L44 16 L38 16" />
+    <path d="M44 12 L40 12" />
+    {/* body — rounded rectangle */}
+    <rect x="10" y="8" width="26" height="16" rx="3" />
+    {/* legs (bottom) */}
+    <path d="M14 24 L14 28 M20 24 L20 28 M26 24 L26 28 M32 24 L32 28" />
+    {/* eyes / crosshair */}
+    <circle cx="18" cy="16" r="1.4" fill="currentColor" stroke="none" />
+    <circle cx="28" cy="16" r="1.4" fill="currentColor" stroke="none" />
   </svg>
 );
 
@@ -54,13 +58,13 @@ export function Hero() {
         .hero-side-nav a {
           display: flex;
           align-items: center;
-          gap: 10px;
-          font-family: 'Syne', sans-serif;
+          gap: 14px;
+          font-family: 'Space Grotesk', 'Syne', sans-serif;
           font-weight: 500;
-          font-size: clamp(12px, 0.95vw, 14px);
-          letter-spacing: 0.12em;
+          font-size: clamp(16px, 1.25vw, 20px);
+          letter-spacing: 0.14em;
           text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.85);
+          color: rgba(255, 255, 255, 0.9);
           text-decoration: none;
           transition: color 0.25s ease, transform 0.25s ease;
         }
