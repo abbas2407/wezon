@@ -15,19 +15,8 @@ export const AnimatedHeroBackground: React.FC = () => {
         backgroundColor: '#000000',
       }}
     >
-      {/* Centered liquid-chrome object roughly occupying middle of viewport */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 'min(58vmin, 720px)',
-          height: 'min(58vmin, 720px)',
-        }}
-      >
-        <LiquidChrome />
-      </div>
+      {/* Full-bleed canvas; the shader fits the spiral inside its aspect */}
+      <LiquidChrome />
     </div>
   );
 };

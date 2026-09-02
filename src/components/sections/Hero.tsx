@@ -19,11 +19,11 @@ export function Hero() {
         }
 
         .hero-scatter-text {
-          color: rgba(255, 255, 255, 0.55);
-          font-family: 'Syne', sans-serif;
-          font-weight: 700;
-          font-size: clamp(20px, 3.2vw, 44px);
-          letter-spacing: -0.02em;
+          color: rgba(255, 255, 255, 0.9);
+          font-family: 'Space Grotesk', 'Syne', sans-serif;
+          font-weight: 500;
+          font-size: clamp(20px, 3vw, 40px);
+          letter-spacing: 0.01em;
           text-transform: uppercase;
           transition: color 0.35s ease, text-shadow 0.35s ease;
           cursor: default;
@@ -73,9 +73,11 @@ export function Hero() {
           background: rgba(255,255,255,0.03);
         }
         .hero-pill .dot {
-          width: 8px; height: 8px; border-radius: 999px;
-          background: #7CFF9C;
-          box-shadow: 0 0 8px rgba(124,255,156,0.7);
+          display: inline-block;
+          color: #7CFF9C;
+          font-size: 14px;
+          line-height: 1;
+          text-shadow: 0 0 8px rgba(124,255,156,0.7);
         }
 
         .hero-arrow {
@@ -126,7 +128,7 @@ export function Hero() {
           }}
         >
           <div>
-            <span className="hero-pill"><span className="dot" /> open for projects</span>
+            <span className="hero-pill"><span className="dot">✦</span> open for projects</span>
           </div>
           <a href="#hero" style={{
             color: '#fff', fontFamily: 'Syne, sans-serif', fontWeight: 900,
@@ -151,7 +153,7 @@ export function Hero() {
           style={{
             position: 'relative', zIndex: 10,
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            width: '100%', marginTop: 'clamp(24px, 5vh, 60px)',
+            width: '100%', marginTop: 'clamp(12px, 2vh, 28px)',
             animation: 'heroFadeIn 0.8s ease both 0.25s',
           }}
         >
@@ -165,7 +167,7 @@ export function Hero() {
           style={{
             position: 'relative', zIndex: 10,
             display: 'flex', flexDirection: 'column', gap: 8,
-            marginTop: 'clamp(20px, 4vh, 40px)', maxWidth: 240,
+            marginTop: 'clamp(10px, 2vh, 20px)', maxWidth: 240,
             animation: 'heroFadeIn 0.8s ease both 0.4s',
           }}
         >

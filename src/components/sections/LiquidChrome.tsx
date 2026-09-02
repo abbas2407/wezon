@@ -13,7 +13,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
  */
 
 class SpiralCurve extends THREE.Curve<THREE.Vector3> {
-  constructor(private turns = 3.0, private a = 0.15, private b = 0.16) {
+  constructor(private turns = 3.0, private a = 0.08, private b = 0.075) {
     super();
   }
   getPoint(t: number, target = new THREE.Vector3()) {
@@ -51,8 +51,20 @@ export const LiquidChrome: React.FC = () => {
 
     // ── Scene & Camera (locked) ───────────────────────────────────────────
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(34, width / height, 0.1, 100);
-    camera.position.set(0, 0, 5);
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+    camera.position.set(0, 0, 6.5);
+    const SPIRAL_R = 1.6; // world-space half-extent to keep visible
+
+    const fitCamera = () => {
+      const aspect = width / height;
+      // distance so vertical half-height covers SPIRAL_R AND horizontal covers it
+      const vFov = (camera.fov * Math.PI) / 180;
+      const dV = SPIRAL_R / Math.tan(vFov / 2);
+      const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect);
+      const dH = SPIRAL_R / Math.tan(hFov / 2);
+      camera.position.z = Math.max(dV, dH) * 1.05;
+    };
+    fitCamera();
 
     // ── Environment ──────────────────────────────────────────────────────
     const pmrem = new THREE.PMREMGenerator(renderer);
@@ -234,6 +246,7 @@ export const LiquidChrome: React.FC = () => {
       height = mount.clientHeight;
       renderer.setSize(width, height);
       camera.aspect = width / height;
+      fitCamera();
       camera.updateProjectionMatrix();
     };
     const ro = new ResizeObserver(onResize);
