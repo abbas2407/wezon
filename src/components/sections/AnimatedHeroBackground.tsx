@@ -1,4 +1,5 @@
 import React from 'react';
+import { LiquidChrome } from './LiquidChrome';
 
 export const AnimatedHeroBackground: React.FC = () => {
   return (
@@ -14,6 +15,8 @@ export const AnimatedHeroBackground: React.FC = () => {
         backgroundColor: '#000000',
       }}
     >
+      {/* Centered canvas constrained vertically so the chrome sits between
+          the top logo row and the bottom "WE BUILD / THE ZONE / AROUND IT." row */}
       <div
         style={{
           position: 'absolute',
@@ -24,19 +27,7 @@ export const AnimatedHeroBackground: React.FC = () => {
           height: 'min(62vmin, 660px)',
         }}
       >
-        <video
-          src="/liquid-chrome.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          style={{
-            display: 'block',
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-          }}
-        />
+        <LiquidChrome />
       </div>
     </div>
   );
