@@ -1,0 +1,361 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --black: #000000;
+  --white: #FFFFFF;
+  --gray-100: #F5F5F5;
+  --gray-200: #E0E0E0;
+  --gray-500: #888888;
+  --gray-700: #333333;
+  --gray-800: #1A1A1A;
+  --gray-900: #111111;
+  --border-dark: rgba(255, 255, 255, 0.1);
+  --border-light: rgba(0, 0, 0, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Syne', sans-serif;
+}
+
+html,
+body {
+  cursor: none;
+  background-color: var(--black);
+  color: var(--white);
+  font-family: 'Syne', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+h1 {
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+}
+
+.label-text {
+  font-family: 'Syne', sans-serif;
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.body-text {
+  font-family: 'Syne', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.caption-text {
+  font-family: 'Syne', sans-serif;
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+/* Lenis recommended */
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Hide cursor fallback */
+a,
+button,
+input,
+select,
+textarea {
+  cursor: none !important;
+}
+
+/* Logo styling */
+.logo-we {
+  font-size: inherit;
+  font-weight: 800;
+}
+
+.logo-sparkle {
+  font-size: 0.45em;
+  vertical-align: middle;
+  line-height: 1;
+  display: inline-block;
+  margin: 0 1px;
+  transform: translateY(0.32em);
+}
+
+.logo-zon {
+  font-size: inherit;
+  font-weight: 800;
+}
+
+/* Input reset for specific text inputs */
+input,
+textarea {
+  border-radius: 0;
+  outline: none;
+  background: transparent;
+  appearance: none;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* ─── Scroll Reveal ─────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Section shared typography ────────────────────────── */
+.section-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-size: clamp(40px, 6vw, 80px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 14px;
+  color: #555;
+  font-weight: 400;
+}
+
+/* ─── Selected Work ────────────────────────────────────── */
+#work {
+  padding: 120px 0;
+  border-top: 0.5px solid #1e1e1e;
+}
+
+
+.work-header {
+  padding: 0 48px;
+  margin-bottom: 64px;
+}
+
+/* ─── Work Grid ──────────────────────────────────────── */
+.work-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: #0a0a0a;
+}
+
+/* ─── Work Card ──────────────────────────────────────── */
+.work-card {
+  display: flex;
+  flex-direction: column;
+  background: #0d0d0d;
+  overflow: hidden;
+  cursor: none;
+}
+
+/* Image */
+.work-card-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.work-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.work-card:hover .work-card-img {
+  transform: scale(1.03);
+}
+
+/* Info below image */
+.work-card-info {
+  padding: 28px 32px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-top: 0.5px solid #1a1a1a;
+}
+
+/* Category row */
+.work-card-cats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.work-card-cat {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-family: 'Syne', sans-serif;
+}
+
+.work-cat-primary {
+  color: #7c6ef0;
+}
+
+.work-cat-secondary {
+  color: #444;
+}
+
+.work-card-cat-dot {
+  color: #333;
+  font-size: 10px;
+}
+
+/* Title */
+.work-card-title {
+  font-size: clamp(18px, 2vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  margin: 0;
+}
+
+/* Description */
+.work-card-desc {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #4a4a4a;
+  font-weight: 400;
+  font-family: 'Syne', sans-serif;
+}
+
+/* Tags */
+.work-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.work-card-tag {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #3a3a3a;
+  border: 0.5px solid #222;
+  padding: 5px 10px;
+  border-radius: 2px;
+  font-family: 'Syne', sans-serif;
+  transition: border-color 0.3s, color 0.3s;
+}
+
+.work-card:hover .work-card-tag {
+  border-color: #333;
+  color: #555;
+}
+
+/* Case study link */
+.work-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #aaa;
+  text-decoration: none;
+  font-family: 'Syne', sans-serif;
+  width: fit-content;
+  transition: color 0.3s, gap 0.3s;
+}
+
+.work-card-link:hover {
+  gap: 12px;
+}
+
+.work-card-divider {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .work-card {
+    grid-template-columns: 1fr;
+    direction: ltr !important;
+  }
+  .work-card-image-wrap {
+    aspect-ratio: 16/9;
+  }
+  .work-card-meta {
+    padding: 40px 32px;
+  }
+  .work-card-divider {
+    display: block;
+    height: 0.5px;
+    background: #1e1e1e;
+    margin: 0 32px;
+  }
+  .work-header {
+    padding: 0 24px;
+  }
+}
