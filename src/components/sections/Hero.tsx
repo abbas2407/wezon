@@ -1,15 +1,13 @@
 import React from 'react';
 import { AnimatedHeroBackground } from './AnimatedHeroBackground';
 
-// Bottom corner pixel matrix marker (two 2x2 grid patterns with center cross)
+// Bottom corner pixel matrix motif (black + white only)
 const PixelMatrixMark = () => (
-  <svg width="24" height="14" viewBox="0 0 24 14" fill="currentColor">
-    {/* Left 2x2 cluster */}
+  <svg width="24" height="14" viewBox="0 0 24 14" fill="#ffffff">
     <rect x="0" y="0" width="3.5" height="3.5" />
     <rect x="5.5" y="0" width="3.5" height="3.5" />
     <rect x="0" y="5.5" width="3.5" height="3.5" />
     <rect x="5.5" y="5.5" width="3.5" height="3.5" />
-    {/* Right 2x2 cluster */}
     <rect x="14" y="0" width="3.5" height="3.5" />
     <rect x="19.5" y="0" width="3.5" height="3.5" />
     <rect x="14" y="5.5" width="3.5" height="3.5" />
@@ -29,36 +27,36 @@ export function Hero() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Syne:wght@700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
 
-        .hero-font-heading {
-          font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        .hero-heading {
+          font-family: 'Orbitron', 'Space Grotesk', -apple-system, sans-serif;
           font-weight: 700;
-          letter-spacing: -0.01em;
+          letter-spacing: 0.04em;
           text-transform: uppercase;
           color: #ffffff;
+          margin: 0;
         }
 
-        .hero-nav-item {
+        .hero-nav-link {
           display: flex;
           align-items: center;
           gap: 12px;
-          font-family: 'Space Grotesk', sans-serif;
+          font-family: 'Orbitron', 'Space Grotesk', sans-serif;
           font-weight: 600;
           font-size: clamp(14px, 1.1vw, 18px);
-          letter-spacing: 0.08em;
-          color: rgba(255, 255, 255, 0.85);
-          text-decoration: none;
-          transition: color 0.2s ease, transform 0.2s ease;
-        }
-        .hero-nav-item:hover {
+          letter-spacing: 0.1em;
           color: #ffffff;
-          transform: translateX(4px);
+          text-decoration: none;
+          transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        .hero-nav-link:hover {
+          transform: translateX(6px);
+          opacity: 1;
         }
         .hero-nav-num {
-          font-family: 'Space Grotesk', monospace;
-          font-weight: 500;
-          opacity: 0.6;
+          font-weight: 700;
+          opacity: 0.65;
         }
 
         .hero-badge {
@@ -68,16 +66,15 @@ export function Hero() {
           padding: 6px 16px;
           border: 1px solid rgba(255, 255, 255, 0.2);
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.04);
-          backdrop-filter: blur(8px);
+          background: transparent;
           font-family: 'Space Grotesk', sans-serif;
           font-size: 13px;
           font-weight: 500;
-          color: rgba(255, 255, 255, 0.9);
+          color: #ffffff;
           letter-spacing: 0.02em;
         }
-        .hero-badge .plus {
-          color: #00ff55;
+        .hero-badge-plus {
+          color: #00FF00;
           font-weight: 700;
           font-size: 14px;
         }
@@ -90,7 +87,7 @@ export function Hero() {
           width: '100%',
           height: '100vh',
           minHeight: '680px',
-          background: '#050505',
+          background: '#000000',
           boxSizing: 'border-box',
           overflow: 'hidden',
           userSelect: 'none',
@@ -100,57 +97,33 @@ export function Hero() {
           padding: 'clamp(20px, 3vh, 36px) clamp(24px, 4vw, 56px)',
         }}
       >
-        {/* WebGL 3D Centerpiece & Background Vectors */}
+        {/* Transparent Canvas with Chrome Liquid Centerpiece */}
         <AnimatedHeroBackground />
 
-        {/* ── Background Precision Overlay Guide Lines & Circles ── */}
+        {/* Thin Circular Ring & Crosshair Lines Behind 3D Centerpiece */}
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
-          {/* Main Centered Thin Circle */}
           <div
             style={{
               position: 'absolute',
               left: '50%',
               top: '50%',
               transform: 'translate(-50%, -50%)',
-              width: 'min(72vmin, 680px)',
-              height: 'min(72vmin, 680px)',
+              width: 'min(70vmin, 660px)',
+              height: 'min(70vmin, 660px)',
               borderRadius: '50%',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
             }}
           />
-          {/* Intersecting Off-Center Thin Arc Circle */}
           <div
             style={{
               position: 'absolute',
-              left: '42%',
-              top: '42%',
+              left: '43%',
+              top: '43%',
               transform: 'translate(-50%, -50%)',
-              width: 'min(90vmin, 860px)',
-              height: 'min(90vmin, 860px)',
+              width: 'min(88vmin, 840px)',
+              height: 'min(88vmin, 840px)',
               borderRadius: '50%',
               border: '1px solid rgba(255, 255, 255, 0.08)',
-            }}
-          />
-          {/* Horizontal Axis Line */}
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              top: '50%',
-              height: '1px',
-              background: 'rgba(255, 255, 255, 0.06)',
-            }}
-          />
-          {/* Vertical Axis Line */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              left: '53.5%',
-              width: '1px',
-              background: 'rgba(255, 255, 255, 0.05)',
             }}
           />
         </div>
@@ -166,20 +139,20 @@ export function Hero() {
             width: '100%',
           }}
         >
-          {/* Left: Status Badge */}
+          {/* Top Left: Green Pill Badge */}
           <div>
             <span className="hero-badge">
-              <span className="plus">+</span> open for projects
+              <span className="hero-badge-plus">+</span> open for projects
             </span>
           </div>
 
-          {/* Center Logo: we+zon */}
+          {/* Top Center: Logo "we.zon" */}
           <a
             href="#hero"
             style={{
               color: '#ffffff',
-              fontFamily: 'Syne, "Space Grotesk", sans-serif',
-              fontWeight: 800,
+              fontFamily: 'Orbitron, "Space Grotesk", sans-serif',
+              fontWeight: 900,
               fontSize: 'clamp(26px, 2.5vw, 36px)',
               letterSpacing: '-0.02em',
               textDecoration: 'none',
@@ -190,28 +163,26 @@ export function Hero() {
             }}
           >
             <span>we</span>
-            <span style={{ fontSize: '0.75em', fontWeight: 900, opacity: 0.95 }}>+</span>
+            <span style={{ fontSize: '0.75em', fontWeight: 900 }}>+</span>
             <span>zon</span>
           </a>
 
-          {/* Right: Arrow Nav */}
+          {/* Top Right: Single Arrow "→" */}
           <div>
             <a
               href="#system"
               style={{
                 color: '#ffffff',
+                fontSize: '24px',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '4px',
-                transition: 'transform 0.2s ease',
+                lineHeight: 1,
               }}
               aria-label="Next Section"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              →
             </a>
           </div>
         </header>
@@ -229,7 +200,7 @@ export function Hero() {
             paddingBottom: 'clamp(16px, 3vh, 32px)',
           }}
         >
-          {/* Row 1: YOUR BUSINESS ... HAS A VISION. */}
+          {/* Left & Right Headings */}
           <div
             style={{
               display: 'flex',
@@ -239,26 +210,20 @@ export function Hero() {
             }}
           >
             <h1
-              className="hero-font-heading"
-              style={{
-                fontSize: 'clamp(28px, 3.8vw, 56px)',
-                margin: 0,
-              }}
+              className="hero-heading"
+              style={{ fontSize: 'clamp(28px, 3.8vw, 56px)' }}
             >
               YOUR BUSINESS
             </h1>
             <h1
-              className="hero-font-heading"
-              style={{
-                fontSize: 'clamp(28px, 3.8vw, 56px)',
-                margin: 0,
-              }}
+              className="hero-heading"
+              style={{ fontSize: 'clamp(28px, 3.8vw, 56px)' }}
             >
               HAS A VISION.
             </h1>
           </div>
 
-          {/* Vertical Middle Area: Left Navigation 01-05 */}
+          {/* Left Numbered Navigation List */}
           <div
             style={{
               display: 'flex',
@@ -266,15 +231,9 @@ export function Hero() {
               margin: 'auto 0',
             }}
           >
-            <nav
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-              }}
-            >
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {navItems.map((item) => (
-                <a key={item.id} href={item.href} className="hero-nav-item">
+                <a key={item.id} href={item.href} className="hero-nav-link">
                   <span className="hero-nav-num">{item.id}</span>
                   <span>{item.label}</span>
                 </a>
@@ -282,7 +241,7 @@ export function Hero() {
             </nav>
           </div>
 
-          {/* Row 2: WE BUILD ... THE ZONE ... AROUND IT. */}
+          {/* Bottom Left, Center, Right Headings */}
           <div
             style={{
               display: 'grid',
@@ -292,41 +251,26 @@ export function Hero() {
             }}
           >
             <div style={{ textAlign: 'left' }}>
-              <span
-                className="hero-font-heading"
-                style={{
-                  fontSize: 'clamp(26px, 3.6vw, 52px)',
-                }}
-              >
+              <span className="hero-heading" style={{ fontSize: 'clamp(26px, 3.6vw, 52px)' }}>
                 WE BUILD
               </span>
             </div>
 
             <div style={{ textAlign: 'center' }}>
-              <span
-                className="hero-font-heading"
-                style={{
-                  fontSize: 'clamp(26px, 3.6vw, 52px)',
-                }}
-              >
+              <span className="hero-heading" style={{ fontSize: 'clamp(26px, 3.6vw, 52px)' }}>
                 THE ZONE
               </span>
             </div>
 
             <div style={{ textAlign: 'right' }}>
-              <span
-                className="hero-font-heading"
-                style={{
-                  fontSize: 'clamp(26px, 3.6vw, 52px)',
-                }}
-              >
+              <span className="hero-heading" style={{ fontSize: 'clamp(26px, 3.6vw, 52px)' }}>
                 AROUND IT.
               </span>
             </div>
           </div>
         </div>
 
-        {/* ── BOTTOM FOOTER BORDER LINE & MARKS ── */}
+        {/* ── BOTTOM FOOTER BORDER LINE ── */}
         <footer
           style={{
             position: 'relative',
@@ -337,7 +281,6 @@ export function Hero() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            color: 'rgba(255, 255, 255, 0.6)',
           }}
         >
           <PixelMatrixMark />

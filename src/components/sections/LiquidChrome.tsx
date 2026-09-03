@@ -3,69 +3,42 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 /**
- * Exact Liquid Chrome Centerpiece matching Reference Image.
- * - Subtle idle liquid breathing.
- * - Cursor hover creates local liquid tearing & cutting effect.
- * - Mercury droplets split off under cursor and recombine with surface tension.
+ * Pixel-Perfect Chrome/Platinum 3D Liquid Object
+ * - Custom metallic physical material (roughness 0.1, metalness 1.0, envMap).
+ * - Simplex noise-based vertex displacement.
+ * - Mousemove displacement toward cursor with liquid splatter & break-apart effect.
+ * - Rendered on transparent canvas centered on page with subtle idle rotation.
  */
 
-// 1. Outer Thin Liquid Wave Ribbon
-class OuterWaveCurve extends THREE.Curve<THREE.Vector3> {
-  constructor() {
-    super();
-  }
-  getPoint(t: number, target = new THREE.Vector3()) {
-    const angle = t * Math.PI * 2 * 1.05 - 0.3;
-    const r = 1.62 + Math.sin(t * Math.PI * 5) * 0.07 + Math.cos(t * Math.PI * 3) * 0.04;
-    const z = Math.sin(t * Math.PI * 4) * 0.03;
-    return target.set(Math.cos(angle) * r, Math.sin(angle) * r, z);
-  }
-}
-
-// 2. Main Thick Liquid Ring Curve (With organic thickness)
-class MainRingCurve extends THREE.Curve<THREE.Vector3> {
+class TwistedRingCurve extends THREE.Curve<THREE.Vector3> {
   constructor() {
     super();
   }
   getPoint(t: number, target = new THREE.Vector3()) {
     const angle = t * Math.PI * 2;
-    const r = 1.12 + Math.sin(angle * 3) * 0.08 + Math.cos(angle * 6) * 0.04;
-    const z = Math.cos(angle * 2) * 0.04;
+    const r = 1.15 + Math.sin(angle * 3) * 0.12 + Math.cos(angle * 5) * 0.05;
+    const z = Math.sin(angle * 2) * 0.08;
     return target.set(Math.cos(angle) * r, Math.sin(angle) * r, z);
   }
 }
 
-// 3. Inner Center Fluid Loop Curve
-class CenterLoopCurve extends THREE.Curve<THREE.Vector3> {
+class OuterRibbonCurve extends THREE.Curve<THREE.Vector3> {
   constructor() {
     super();
   }
   getPoint(t: number, target = new THREE.Vector3()) {
-    const angle = t * Math.PI * 2;
-    const r = 0.6 + Math.sin(angle * 4) * 0.06;
-    return target.set(Math.cos(angle) * r, Math.sin(angle) * r, 0);
+    const angle = t * Math.PI * 2 * 1.08 - 0.25;
+    const r = 1.6 + Math.sin(t * Math.PI * 6) * 0.06;
+    const z = Math.cos(t * Math.PI * 4) * 0.04;
+    return target.set(Math.cos(angle) * r, Math.sin(angle) * r, z);
   }
 }
 
-// 4. Center Teardrop Hook Curve
-class TeardropHookCurve extends THREE.Curve<THREE.Vector3> {
-  constructor() {
-    super();
-  }
-  getPoint(t: number, target = new THREE.Vector3()) {
-    const angle = t * Math.PI * 1.6 - 0.8;
-    const r = 0.38 + t * 0.18;
-    return target.set(Math.cos(angle) * r, Math.sin(angle) * r, 0);
-  }
-}
-
-interface MercuryDroplet {
+interface SplatterFragment {
   mesh: THREE.Mesh;
-  homePos: THREE.Vector3;
-  currentPos: THREE.Vector3;
+  basePos: THREE.Vector3;
   velocity: THREE.Vector3;
-  baseRadius: number;
-  isTornOff: boolean;
+  size: number;
 }
 
 export const LiquidChrome: React.FC = () => {
@@ -78,7 +51,7 @@ export const LiquidChrome: React.FC = () => {
     let width = mount.clientWidth;
     let height = mount.clientHeight;
 
-    // ── Renderer ──────────────────────────────────────────────────────────
+    // ── WebGL Renderer ───────────────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -87,7 +60,7 @@ export const LiquidChrome: React.FC = () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.4;
+    renderer.toneMappingExposure = 1.3;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.display = 'block';
@@ -109,42 +82,38 @@ export const LiquidChrome: React.FC = () => {
     };
     fitCamera();
 
-    // ── Environment & Platinum Metal Studio Lighting ─────────────────────
+    // ── Lighting & Studio Environment ───────────────────────────────────
     const pmrem = new THREE.PMREMGenerator(renderer);
     pmrem.compileEquirectangularShader();
     const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
     scene.environment = envRT.texture;
 
-    const mainLight = new THREE.DirectionalLight(0xffffff, 3.0);
-    mainLight.position.set(5, 6, 7);
-    scene.add(mainLight);
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.8);
+    dirLight1.position.set(5, 6, 7);
+    scene.add(dirLight1);
 
-    const fillLight = new THREE.DirectionalLight(0xaaccff, 1.5);
-    fillLight.position.set(-5, -4, -3);
-    scene.add(fillLight);
+    const dirLight2 = new THREE.DirectionalLight(0x88bbff, 1.2);
+    dirLight2.position.set(-5, -4, -3);
+    scene.add(dirLight2);
 
-    const backLight = new THREE.DirectionalLight(0xffffff, 2.0);
-    backLight.position.set(0, 0, -5);
-    scene.add(backLight);
-
-    // ── Uniforms for Liquid Tearing GLSL Shader ──────────────────────────
+    // ── Metallic Custom Shader Uniforms ──────────────────────────────────
     const uniforms = {
       uTime: { value: 0 },
       uMouse: { value: new THREE.Vector3(999, 999, 0) },
       uHover: { value: 0 },
-      uCutRadius: { value: 0.55 },
-      uTearForce: { value: 0.65 },
+      uDispAmp: { value: 0.12 },
+      uCursorForce: { value: 0.55 },
+      uCursorRadius: { value: 0.75 },
     };
 
-    const createPlatinumMaterial = () => {
+    const makeMetallicShaderMaterial = () => {
       const mat = new THREE.MeshPhysicalMaterial({
-        color: 0xf8fafc,
-        metalness: 0.99,
-        roughness: 0.02,
-        envMapIntensity: 2.5,
-        clearcoat: 1.0,
-        clearcoatRoughness: 0.01,
-        ior: 1.55,
+        color: 0xffffff,
+        metalness: 1.0,
+        roughness: 0.1,
+        envMapIntensity: 2.2,
+        clearcoat: 0.8,
+        clearcoatRoughness: 0.05,
       });
 
       mat.onBeforeCompile = (shader) => {
@@ -154,8 +123,9 @@ export const LiquidChrome: React.FC = () => {
           uniform float uTime;
           uniform vec3  uMouse;
           uniform float uHover;
-          uniform float uCutRadius;
-          uniform float uTearForce;
+          uniform float uDispAmp;
+          uniform float uCursorForce;
+          uniform float uCursorRadius;
 
           vec4 permute(vec4 x){ return mod(((x*34.0)+1.0)*x, 289.0); }
           vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }
@@ -208,108 +178,76 @@ export const LiquidChrome: React.FC = () => {
           `
             vec3 transformed = vec3(position);
 
-            // 1. Subtle, slow idle organic wave
-            float idleWave = snoise(position * 2.0 + vec3(uTime * 0.2, 0.0, 0.0)) * 0.025;
+            // Simplex noise idle displacement
+            float n1 = snoise(position * 2.5 + vec3(uTime * 0.4, 0.0, 0.0));
+            float n2 = snoise(position * 6.0 - vec3(0.0, uTime * 0.6, 0.0)) * 0.4;
+            float idleNoise = (n1 + n2) * uDispAmp;
 
-            // 2. Cursor Liquid Cut / Tear Effect
-            vec3 mLoc = uMouse;
-            float distToCursor = distance(position, mLoc);
-            float cutEffect = smoothstep(uCutRadius, 0.0, distToCursor) * uHover;
+            // Cursor proximity displacement towards cursor + splatter turbulence
+            vec3 mPos = uMouse;
+            float d = distance(position, mPos);
+            float cursorInfluence = smoothstep(uCursorRadius, 0.0, d) * uHover;
 
-            // Push vertices AWAY from cursor center to cut a hole in the liquid metal
-            vec3 tearDir = normalize(position - mLoc);
-            float tearDisplacement = cutEffect * uTearForce;
+            vec3 attractDir = normalize(mPos - position);
+            float pull = cursorInfluence * uCursorForce;
+            float splatterTurbulence = snoise(position * 12.0 + vec3(uTime * 2.5)) * cursorInfluence * 0.35;
 
-            // High frequency liquid bead ripples along torn edge
-            float edgeRipples = snoise(position * 18.0 + vec3(uTime * 3.0)) * cutEffect * 0.15;
-
-            // Apply displacement: push inward/outward creating gash
-            transformed += (tearDir * tearDisplacement + normal * (idleWave + edgeRipples));
+            transformed += normal * (idleNoise + splatterTurbulence) + attractDir * pull;
           `
         );
       };
       return mat;
     };
 
-    const sharedChromeMat = createPlatinumMaterial();
+    const chromeMat = makeMetallicShaderMaterial();
     const rootGroup = new THREE.Group();
 
-    // ── Build Geometries ──────────────────────────────────────────────────
-    // 1. Outer Wave Ribbon
-    const outerGeo = new THREE.TubeGeometry(new OuterWaveCurve(), 350, 0.04, 18, false);
-    rootGroup.add(new THREE.Mesh(outerGeo, sharedChromeMat));
+    // ── Build Organic Molten Form ─────────────────────────────────────────
+    const mainRingGeo = new THREE.TubeGeometry(new TwistedRingCurve(), 450, 0.16, 26, true);
+    rootGroup.add(new THREE.Mesh(mainRingGeo, chromeMat));
 
-    // 2. Main Middle Ring
-    const mainGeo = new THREE.TubeGeometry(new MainRingCurve(), 450, 0.16, 26, true);
-    rootGroup.add(new THREE.Mesh(mainGeo, sharedChromeMat));
+    const outerRibbonGeo = new THREE.TubeGeometry(new OuterRibbonCurve(), 350, 0.05, 18, false);
+    rootGroup.add(new THREE.Mesh(outerRibbonGeo, chromeMat));
 
-    // 3. Inner Center Ring
-    const innerGeo = new THREE.TubeGeometry(new CenterLoopCurve(), 300, 0.08, 20, true);
-    rootGroup.add(new THREE.Mesh(innerGeo, sharedChromeMat));
+    // Inner fluid core
+    const coreGeo = new THREE.TorusGeometry(0.55, 0.08, 20, 100);
+    rootGroup.add(new THREE.Mesh(coreGeo, chromeMat));
 
-    // 4. Center Teardrop Tongue
-    const tearGeo = new THREE.TubeGeometry(new TeardropHookCurve(), 100, 0.05, 16, false);
-    rootGroup.add(new THREE.Mesh(tearGeo, sharedChromeMat));
+    // ── Liquid Splatter Fragments ─────────────────────────────────────────
+    const fragments: SplatterFragment[] = [];
+    const fragGroup = new THREE.Group();
+    const FRAG_COUNT = 48;
 
-    // 5. Hole Voids & Bridges (Specific details matching image 2)
-    const holePositions = [
-      new THREE.Vector3(-0.9, 0.25, 0.05),
-      new THREE.Vector3(-0.6, 0.75, -0.05),
-      new THREE.Vector3(-0.35, -0.9, 0.0),
-      new THREE.Vector3(0.8, -0.4, 0.05),
-      new THREE.Vector3(0.95, 0.3, -0.05),
-    ];
-
-    holePositions.forEach((pos) => {
-      const holeRingCurve = new THREE.EllipseCurve(
-        pos.x, pos.y,
-        0.12, 0.08,
-        0, Math.PI * 2,
-        false, 0
-      );
-      const points = holeRingCurve.getPoints(30).map((p) => new THREE.Vector3(p.x, p.y, pos.z));
-      const holeCurve = new THREE.CatmullRomCurve3(points, true);
-      const hGeo = new THREE.TubeGeometry(holeCurve, 40, 0.035, 12, true);
-      rootGroup.add(new THREE.Mesh(hGeo, sharedChromeMat));
-    });
-
-    // ── 6. Mercury Droplets (Liquefy & tear apart under cursor) ───────────
-    const droplets: MercuryDroplet[] = [];
-    const DROPLET_COUNT = 65;
-    const dropletGroup = new THREE.Group();
-
-    for (let i = 0; i < DROPLET_COUNT; i++) {
-      const angle = (i / DROPLET_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.2;
-      const radius = 0.35 + Math.random() * 1.35;
-      const homePos = new THREE.Vector3(
+    for (let i = 0; i < FRAG_COUNT; i++) {
+      const angle = (i / FRAG_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+      const radius = 0.4 + Math.random() * 1.3;
+      const basePos = new THREE.Vector3(
         Math.cos(angle) * radius,
         Math.sin(angle) * radius,
-        (Math.random() - 0.5) * 0.1
+        (Math.random() - 0.5) * 0.2
       );
 
-      const rSize = 0.03 + Math.random() * 0.05;
-      const dGeo = new THREE.IcosahedronGeometry(rSize, 3);
-      const dMesh = new THREE.Mesh(dGeo, sharedChromeMat);
-      dMesh.position.copy(homePos);
+      const size = 0.03 + Math.random() * 0.05;
+      const fGeo = new THREE.IcosahedronGeometry(size, 3);
+      const fMesh = new THREE.Mesh(fGeo, chromeMat);
+      fMesh.position.copy(basePos);
 
-      dropletGroup.add(dMesh);
-      droplets.push({
-        mesh: dMesh,
-        homePos: homePos.clone(),
-        currentPos: homePos.clone(),
+      fragGroup.add(fMesh);
+      fragments.push({
+        mesh: fMesh,
+        basePos: basePos.clone(),
         velocity: new THREE.Vector3(),
-        baseRadius: rSize,
-        isTornOff: false,
+        size,
       });
     }
-    rootGroup.add(dropletGroup);
+    rootGroup.add(fragGroup);
     scene.add(rootGroup);
 
-    // ── Pointer Raycasting ────────────────────────────────────────────────
+    // ── Raycasting Pointer Tracking ───────────────────────────────────────
     const raycaster = new THREE.Raycaster();
     const pointerNDC = new THREE.Vector2(999, 999);
-    const mouseLocalTarget = new THREE.Vector3(999, 999, 0);
-    let isHovered = 0;
+    const targetLocalMouse = new THREE.Vector3(999, 999, 0);
+    let hoverState = 0;
 
     const onPointerMove = (e: PointerEvent) => {
       const rect = renderer.domElement.getBoundingClientRect();
@@ -319,7 +257,7 @@ export const LiquidChrome: React.FC = () => {
         e.clientY < rect.top ||
         e.clientY > rect.bottom
       ) {
-        isHovered = 0;
+        hoverState = 0;
         return;
       }
 
@@ -333,13 +271,13 @@ export const LiquidChrome: React.FC = () => {
 
       const hit = new THREE.Vector3();
       if (raycaster.ray.intersectPlane(plane, hit)) {
-        mouseLocalTarget.copy(rootGroup.worldToLocal(hit.clone()));
-        isHovered = 1;
+        targetLocalMouse.copy(rootGroup.worldToLocal(hit.clone()));
+        hoverState = 1;
       }
     };
 
     const onPointerLeave = () => {
-      isHovered = 0;
+      hoverState = 0;
     };
 
     window.addEventListener('pointermove', onPointerMove, { passive: true });
@@ -358,7 +296,7 @@ export const LiquidChrome: React.FC = () => {
     const ro = new ResizeObserver(onResize);
     ro.observe(mount);
 
-    // ── Render Loop ───────────────────────────────────────────────────────
+    // ── Animation Loop ────────────────────────────────────────────────────
     const clock = new THREE.Clock();
     let animId = 0;
 
@@ -367,51 +305,33 @@ export const LiquidChrome: React.FC = () => {
       const t = clock.getElapsedTime();
 
       uniforms.uTime.value = t;
-      uniforms.uMouse.value.lerp(mouseLocalTarget, Math.min(1, dt * 10));
-      uniforms.uHover.value += (isHovered - uniforms.uHover.value) * Math.min(1, dt * 5);
+      uniforms.uMouse.value.lerp(targetLocalMouse, Math.min(1, dt * 8));
+      uniforms.uHover.value += (hoverState - uniforms.uHover.value) * Math.min(1, dt * 4);
 
-      // Very subtle slow drift (NOT wild animation)
-      rootGroup.rotation.z = Math.sin(t * 0.08) * 0.03;
-      rootGroup.rotation.x = Math.sin(t * 0.05) * 0.02;
+      // Subtle idle rotation when no hover
+      const idleRotSpeed = hoverState > 0.5 ? 0.02 : 0.06;
+      rootGroup.rotation.z = Math.sin(t * 0.1) * 0.04 + t * idleRotSpeed;
+      rootGroup.rotation.x = Math.sin(t * 0.2) * 0.03;
 
-      // Physics: Mercury droplets tear apart on hover & coalesce back
+      // Mouse displacement & liquid splatter physics on fragments
       const mPos = uniforms.uMouse.value;
       const hVal = uniforms.uHover.value;
-      const CUT_DIST = 0.65;
 
-      droplets.forEach((drop) => {
-        const dist = drop.mesh.position.distanceTo(mPos);
+      fragments.forEach((frag) => {
+        const d = frag.mesh.position.distanceTo(mPos);
+        const radius = 0.8;
 
-        if (hVal > 0.02 && dist < CUT_DIST) {
-          // Tear apart from surface: push away from cursor with liquid burst
-          const pushDir = drop.mesh.position.clone().sub(mPos).normalize();
-          if (pushDir.lengthSq() === 0) pushDir.set(0, 1, 0);
-
-          const force = (1.0 - dist / CUT_DIST) * 3.5 * hVal;
-          drop.velocity.add(pushDir.multiplyScalar(force * dt * 8));
-          drop.isTornOff = true;
-        } else {
-          drop.isTornOff = false;
+        if (hVal > 0.02 && d < radius) {
+          const pushDir = frag.mesh.position.clone().sub(mPos).normalize();
+          const force = (1.0 - d / radius) * 2.5 * hVal;
+          frag.velocity.add(pushDir.multiplyScalar(force * dt * 6));
         }
 
-        // Surface tension cohesion: spring force pulling back to home location
-        const springForce = drop.homePos.clone().sub(drop.mesh.position).multiplyScalar(15);
-        drop.velocity.add(springForce.multiplyScalar(dt));
+        const spring = frag.basePos.clone().sub(frag.mesh.position).multiplyScalar(12);
+        frag.velocity.add(spring.multiplyScalar(dt));
+        frag.velocity.multiplyScalar(0.86);
 
-        // Viscous fluid damping
-        drop.velocity.multiplyScalar(0.85);
-
-        // Update position
-        drop.mesh.position.add(drop.velocity.clone().multiplyScalar(dt));
-
-        // Stretch shape when moving fast (liquid drop deformation)
-        const speed = drop.velocity.length();
-        const stretch = 1.0 + Math.min(speed * 0.3, 0.6);
-        drop.mesh.scale.set(
-          drop.baseRadius * (2.0 - stretch),
-          drop.baseRadius * stretch,
-          drop.baseRadius
-        );
+        frag.mesh.position.add(frag.velocity.clone().multiplyScalar(dt));
       });
 
       renderer.render(scene, camera);
@@ -427,11 +347,10 @@ export const LiquidChrome: React.FC = () => {
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerleave', onPointerLeave);
 
-      outerGeo.dispose();
-      mainGeo.dispose();
-      innerGeo.dispose();
-      tearGeo.dispose();
-      sharedChromeMat.dispose();
+      mainRingGeo.dispose();
+      outerRibbonGeo.dispose();
+      coreGeo.dispose();
+      chromeMat.dispose();
       envRT.dispose();
       pmrem.dispose();
       renderer.dispose();
