@@ -1,5 +1,5 @@
 import React from 'react';
-import { LiquidChrome } from './LiquidChrome';
+import { Hero3DCanvas } from './Hero3DCanvas';
 
 export const AnimatedHeroBackground: React.FC = () => {
   return (
@@ -15,7 +15,7 @@ export const AnimatedHeroBackground: React.FC = () => {
         backgroundColor: '#000000',
       }}
     >
-      {/* Centered canvas constrained vertically so the chrome sits between
+      {/* Centered canvas constrained vertically so the liquid platinum sits between
           the top logo row and the bottom "WE BUILD / THE ZONE / AROUND IT." row */}
       <div
         style={{
@@ -23,12 +23,14 @@ export const AnimatedHeroBackground: React.FC = () => {
           left: '50%',
           top: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'min(62vmin, 660px)',
-          height: 'min(62vmin, 660px)',
+          width: 'min(66vmin, 680px)',
+          height: 'min(66vmin, 680px)',
+          pointerEvents: 'auto',
         }}
       >
-        <LiquidChrome />
+        <Hero3DCanvas />
       </div>
     </div>
   );
 };
+

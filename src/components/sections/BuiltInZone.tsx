@@ -1,90 +1,168 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const cases = [
+const showcaseProjects = [
   {
     id: '01',
-    name: 'LIVORA',
-    desc: 'Furniture retail transformed into a high-end digital spatial experience.',
+    name: 'LIVORA SPATIAL',
+    category: 'E-COMMERCE / SPATIAL 3D',
+    desc: 'Luxury furniture retail transformed into a zero-latency interactive spatial 3D experience with real-time room configuration.',
+    stats: '+142% Avg Order Value · 60fps WebGL',
+    previewUrl: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
+    laptopUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: '02',
-    name: 'TAILORME',
-    desc: 'Redefining bespoke tailoring with digital precision and 3D body scanning.',
-  },
-  {
-    id: '03',
-    name: 'INTERIA',
-    desc: 'Interior design studio with an immersive project catalog and client portal.',
+    name: 'TAILORME ARCHITECTURE',
+    category: 'INTELLIGENT FASHION ERP',
+    desc: 'Redefining bespoke tailoring with computerized 3D measurement mapping, autonomous inventory pipelines, and global client portals.',
+    stats: '84% Reduction in Lead Time · Enterprise ERP',
+    previewUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80',
+    laptopUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
   },
 ];
 
 export function BuiltInZone() {
+  const [activeCase, setActiveCase] = useState(0);
+  const current = showcaseProjects[activeCase];
+
   return (
     <section
       id="work"
+      className="relative bg-black text-white overflow-hidden"
       style={{
-        background: '#080808',
-        padding: 'clamp(60px, 8vw, 120px) clamp(24px, 5vw, 64px)',
-        fontFamily: 'Syne, sans-serif',
-        color: '#fff',
+        padding: 'clamp(60px, 8vw, 120px) clamp(24px, 4vw, 56px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
       }}
     >
-      <h2 style={{
-        fontSize: 'clamp(28px, 3.6vw, 52px)', fontWeight: 800,
-        letterSpacing: '-0.02em', textTransform: 'uppercase', margin: 0,
-      }}>
-        Built in zone
-      </h2>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8, marginBottom: 32, fontSize: 12, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.5)' }}>
-        BUILT. TESTED. MOVED.
-        <span style={{ color: 'rgba(255,255,255,0.35)' }}>✕</span>
-      </div>
+      {/* Header Bar */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 relative">
+        {/* Subtle background concentric vector arc */}
+        <div className="absolute -top-12 -right-12 w-64 h-64 rounded-full border border-white/10 pointer-events-none" />
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        {cases.map((c) => (
-          <article
-            key={c.id}
+        <div>
+          <h2
+            className="text-white font-bold leading-none tracking-tight uppercase"
             style={{
-              background: '#0e0e0e',
-              border: '1px solid rgba(255,255,255,0.08)',
-              display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 0,
-              overflow: 'hidden',
+              fontFamily: 'Orbitron, Space Grotesk, sans-serif',
+              fontSize: 'clamp(32px, 4vw, 60px)',
             }}
           >
-            <div style={{ padding: 'clamp(24px, 3vw, 44px)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 24 }}>
-              <div>
-                <div style={{ fontSize: 11, letterSpacing: '0.2em', color: '#B7FF66', marginBottom: 12 }}>
-                  CASE {c.id}
-                </div>
-                <div style={{ fontSize: 'clamp(20px, 2.2vw, 32px)', fontWeight: 700, letterSpacing: '-0.01em' }}>
-                  {c.name}
-                </div>
-                <p style={{ marginTop: 12, color: 'rgba(255,255,255,0.6)', fontSize: 14, lineHeight: 1.6, maxWidth: 380 }}>
-                  {c.desc}
-                </p>
+            BUILT IN ZONE
+          </h2>
+          <div className="flex items-center gap-3 mt-4 text-[12px] tracking-[0.25em] text-white/50 font-mono">
+            <span>BUILT. TESTED. MOVED.</span>
+            <span className="text-white/30">✕</span>
+          </div>
+        </div>
+
+        {/* Case switcher tabs */}
+        <div className="flex items-center gap-3">
+          {showcaseProjects.map((p, idx) => (
+            <button
+              key={p.id}
+              onClick={() => setActiveCase(idx)}
+              className="px-4 py-2 text-xs font-mono tracking-wider transition-all duration-200 border rounded-sm"
+              style={{
+                borderColor: activeCase === idx ? '#ffffff' : 'rgba(255, 255, 255, 0.2)',
+                backgroundColor: activeCase === idx ? '#ffffff' : 'transparent',
+                color: activeCase === idx ? '#000000' : 'rgba(255, 255, 255, 0.6)',
+              }}
+            >
+              CASE {p.id}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Dark Glassmorphic Showcase Container Matching Reference Image */}
+      <div
+        className="relative bg-[#0a0a0a] border border-white/10 p-6 md:p-12 overflow-hidden rounded-md"
+        style={{
+          boxShadow: '0 20px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+        }}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          
+          {/* ── LEFT: PROJECT DETAILS & SPECS ── */}
+          <div className="lg:col-span-5 flex flex-col justify-between min-h-[340px]">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-white/5 border border-white/15 text-[#7CFF9C] mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#7CFF9C] animate-pulse" />
+                <span>CASE {current.id}</span>
+                <span className="text-white/30">/</span>
+                <span className="text-white/70">{current.category}</span>
               </div>
-              <a
-                href="#"
+
+              <h3
+                className="text-white font-bold uppercase tracking-tight mb-4"
                 style={{
-                  fontSize: 12, letterSpacing: '0.2em', color: '#fff',
-                  textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8,
+                  fontFamily: 'Orbitron, Space Grotesk, sans-serif',
+                  fontSize: 'clamp(28px, 3vw, 44px)',
+                  lineHeight: 1.1,
                 }}
               >
-                EXPLORE CASE
-                <span aria-hidden>→</span>
-              </a>
+                {current.name}
+              </h3>
+
+              <p className="text-white/60 text-sm md:text-base leading-relaxed font-sans max-w-md mb-6">
+                {current.desc}
+              </p>
+
+              <div className="text-xs font-mono text-white/40 tracking-wider mb-8">
+                METRIC: {current.stats}
+              </div>
             </div>
+
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-3 text-xs font-mono tracking-[0.2em] text-white hover:text-white/80 transition-colors uppercase"
+            >
+              <span>EXPLORE CASE</span>
+              <span className="text-sm">→</span>
+            </a>
+          </div>
+
+          {/* ── RIGHT: SLEEK LAPTOP & UI MOCKUP VIEWPORT ── */}
+          <div className="lg:col-span-7 flex flex-col gap-4">
+            
+            {/* Top Dashboard Floating Strip Mockup */}
+            <div className="w-full bg-[#141414] border border-white/10 rounded-t-lg p-3 flex items-center justify-between text-xs font-mono text-white/50">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+                <span className="ml-3 text-[11px] text-white/40">app.wezon.zone/{current.name.toLowerCase().replace(' ', '-')}</span>
+              </div>
+              <span className="text-[11px] text-[#7CFF9C]">LIVE ● 60FPS</span>
+            </div>
+
+            {/* Laptop Screen Hardware Mockup Frame */}
             <div
-              aria-hidden
+              className="relative w-full bg-[#050505] border border-white/15 rounded-b-xl overflow-hidden p-2 shadow-2xl"
               style={{
-                background:
-                  'linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 40%, #1a1a1a 100%)',
-                minHeight: 260,
-                borderLeft: '1px solid rgba(255,255,255,0.06)',
+                aspectRatio: '16/10',
               }}
-            />
-          </article>
-        ))}
+            >
+              <div className="w-full h-full rounded-lg overflow-hidden relative group">
+                <img
+                  src={current.laptopUrl}
+                  alt={current.name}
+                  className="w-full h-full object-cover object-center filter brightness-90 group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                
+                {/* Tech overlay grid line and gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
+                
+                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-mono text-white/80">
+                  <span>[SPATIAL RENDERING: 4K HDR]</span>
+                  <span className="text-white/60">SYSTEM INTEGRITY 100%</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
       </div>
     </section>
   );

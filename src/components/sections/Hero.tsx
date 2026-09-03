@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { AnimatedHeroBackground } from './AnimatedHeroBackground';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Bottom corner "crab claw" / grid mark matching Image 2 reference
 const CrabMark = () => (
@@ -29,6 +33,48 @@ const navItems = [
 ];
 
 export function Hero() {
+  const heroRef = useRef<HTMLElement>(null);
+  const middleContentRef = useRef<HTMLDivElement>(null);
+  const canvasWrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (!heroRef.current) return;
+
+      // Scroll motion: Text fades out with downward Y-axis displacement
+      if (middleContentRef.current) {
+        gsap.to(middleContentRef.current, {
+          y: 60,
+          opacity: 0,
+          ease: 'power1.out',
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: 'top top',
+            end: '60% top',
+            scrub: 0.5,
+          },
+        });
+      }
+
+      // 3D Liquid Canvas scales down smoothly as user scrolls
+      if (canvasWrapRef.current) {
+        gsap.to(canvasWrapRef.current, {
+          scale: 0.85,
+          opacity: 0.35,
+          ease: 'power1.out',
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.5,
+          },
+        });
+      }
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <>
       <style>{`
@@ -86,6 +132,7 @@ export function Hero() {
       `}</style>
 
       <section
+        ref={heroRef}
         id="hero"
         style={{
           position: 'relative',
@@ -103,7 +150,9 @@ export function Hero() {
         }}
       >
         {/* Transparent Canvas with Chrome Liquid Centerpiece */}
-        <AnimatedHeroBackground />
+        <div ref={canvasWrapRef} style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+          <AnimatedHeroBackground />
+        </div>
 
         {/* Thin Single Circle Outline Behind 3D Centerpiece */}
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
@@ -151,7 +200,7 @@ export function Hero() {
             </span>
           </div>
 
-          {/* Top Center: Logo "we.zon" (with dot, NOT plus) */}
+          {/* Top Center: Logo "we✦zon" */}
           <a
             href="#hero"
             style={{
@@ -167,7 +216,21 @@ export function Hero() {
             }}
           >
             <span>we</span>
-            <span style={{ margin: '0 1px' }}>.</span>
+            <span
+              style={{
+                fontSize: '0.62em',
+                lineHeight: 1,
+                margin: '0 3px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 900,
+                color: '#ffffff',
+                transform: 'translateY(-1px)',
+              }}
+            >
+              ✦
+            </span>
             <span>zon</span>
           </a>
 
@@ -193,6 +256,7 @@ export function Hero() {
 
         {/* ── MIDDLE CONTENT LAYER ── */}
         <div
+          ref={middleContentRef}
           style={{
             position: 'relative',
             zIndex: 10,
@@ -202,6 +266,7 @@ export function Hero() {
             justifyContent: 'space-between',
             paddingTop: 'clamp(16px, 3vh, 32px)',
             paddingBottom: 'clamp(16px, 3vh, 32px)',
+            pointerEvents: 'none',
           }}
         >
           {/* Left & Right Headings */}
@@ -211,19 +276,20 @@ export function Hero() {
               justifyContent: 'space-between',
               alignItems: 'center',
               width: '100%',
+              pointerEvents: 'none',
             }}
           >
-            <h1 className="hero-heading" style={{ fontSize: 'clamp(28px, 3.8vw, 56px)' }}>
+            <h1 className="hero-heading" style={{ fontSize: 'clamp(28px, 3.8vw, 56px)', pointerEvents: 'auto' }}>
               YOUR BUSINESS
             </h1>
-            <h1 className="hero-heading" style={{ fontSize: 'clamp(28px, 3.8vw, 56px)' }}>
+            <h1 className="hero-heading" style={{ fontSize: 'clamp(28px, 3.8vw, 56px)', pointerEvents: 'auto' }}>
               HAS A VISION.
             </h1>
           </div>
 
           {/* Left Numbered Navigation List */}
-          <div style={{ display: 'flex', alignItems: 'center', margin: 'auto 0' }}>
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', margin: 'auto 0', pointerEvents: 'none' }}>
+            <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px', pointerEvents: 'auto' }}>
               {navItems.map((item) => (
                 <a key={item.id} href={item.href} className="hero-nav-link">
                   <span className="hero-nav-num">{item.id}</span>
@@ -240,21 +306,22 @@ export function Hero() {
               gridTemplateColumns: '1fr auto 1fr',
               alignItems: 'center',
               width: '100%',
+              pointerEvents: 'none',
             }}
           >
-            <div style={{ textAlign: 'left' }}>
+            <div style={{ textAlign: 'left', pointerEvents: 'auto' }}>
               <span className="hero-heading" style={{ fontSize: 'clamp(26px, 3.6vw, 52px)' }}>
                 WE BUILD
               </span>
             </div>
 
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', pointerEvents: 'auto' }}>
               <span className="hero-heading" style={{ fontSize: 'clamp(26px, 3.6vw, 52px)' }}>
                 THE ZONE
               </span>
             </div>
 
-            <div style={{ textAlign: 'right' }}>
+            <div style={{ textAlign: 'right', pointerEvents: 'auto' }}>
               <span className="hero-heading" style={{ fontSize: 'clamp(26px, 3.6vw, 52px)' }}>
                 AROUND IT.
               </span>

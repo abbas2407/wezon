@@ -27,7 +27,6 @@
 
 html,
 body {
-  cursor: none;
   background-color: var(--black);
   color: var(--white);
   font-family: 'Syne', sans-serif;
@@ -97,15 +96,6 @@ html.lenis {
   pointer-events: none;
 }
 
-/* Hide cursor fallback */
-a,
-button,
-input,
-select,
-textarea {
-  cursor: none !important;
-}
-
 /* Logo styling */
 .logo-we {
   font-size: inherit;
@@ -113,12 +103,14 @@ textarea {
 }
 
 .logo-sparkle {
-  font-size: 0.45em;
+  font-size: 0.62em;
   vertical-align: middle;
   line-height: 1;
-  display: inline-block;
-  margin: 0 1px;
-  transform: translateY(0.32em);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 2px;
+  transform: translateY(-0.06em);
 }
 
 .logo-zon {
@@ -204,7 +196,6 @@ textarea {
   flex-direction: column;
   background: #0d0d0d;
   overflow: hidden;
-  cursor: none;
 }
 
 /* Image */
