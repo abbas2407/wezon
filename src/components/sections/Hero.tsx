@@ -1,17 +1,22 @@
 import React from 'react';
 import { AnimatedHeroBackground } from './AnimatedHeroBackground';
 
-// Bottom corner pixel matrix motif (black + white only)
-const PixelMatrixMark = () => (
-  <svg width="24" height="14" viewBox="0 0 24 14" fill="#ffffff">
-    <rect x="0" y="0" width="3.5" height="3.5" />
-    <rect x="5.5" y="0" width="3.5" height="3.5" />
-    <rect x="0" y="5.5" width="3.5" height="3.5" />
-    <rect x="5.5" y="5.5" width="3.5" height="3.5" />
-    <rect x="14" y="0" width="3.5" height="3.5" />
-    <rect x="19.5" y="0" width="3.5" height="3.5" />
-    <rect x="14" y="5.5" width="3.5" height="3.5" />
-    <rect x="19.5" y="5.5" width="3.5" height="3.5" />
+// Bottom corner "crab claw" / grid mark matching Image 2 reference
+const CrabMark = () => (
+  <svg width="46" height="30" viewBox="0 0 46 30" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+    {/* left claw */}
+    <path d="M2 6 L2 16 L8 16" />
+    <path d="M2 12 L6 12" />
+    {/* right claw */}
+    <path d="M44 6 L44 16 L38 16" />
+    <path d="M44 12 L40 12" />
+    {/* body */}
+    <rect x="10" y="8" width="26" height="16" rx="3" />
+    {/* bottom legs */}
+    <path d="M14 24 L14 28 M20 24 L20 28 M26 24 L26 28 M32 24 L32 28" />
+    {/* eyes */}
+    <circle cx="18" cy="16" r="1.4" fill="currentColor" stroke="none" />
+    <circle cx="28" cy="16" r="1.4" fill="currentColor" stroke="none" />
   </svg>
 );
 
@@ -32,7 +37,7 @@ export function Hero() {
         .hero-heading {
           font-family: 'Orbitron', 'Space Grotesk', -apple-system, sans-serif;
           font-weight: 700;
-          letter-spacing: 0.04em;
+          letter-spacing: 0.03em;
           text-transform: uppercase;
           color: #ffffff;
           margin: 0;
@@ -52,7 +57,6 @@ export function Hero() {
         }
         .hero-nav-link:hover {
           transform: translateX(6px);
-          opacity: 1;
         }
         .hero-nav-num {
           font-weight: 700;
@@ -63,20 +67,21 @@ export function Hero() {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          padding: 6px 16px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          padding: 6px 14px;
+          border: 1px solid rgba(255, 255, 255, 0.18);
           border-radius: 999px;
-          background: transparent;
+          background: rgba(255, 255, 255, 0.04);
+          backdrop-filter: blur(8px);
           font-family: 'Space Grotesk', sans-serif;
           font-size: 13px;
           font-weight: 500;
-          color: #ffffff;
+          color: rgba(255, 255, 255, 0.9);
           letter-spacing: 0.02em;
         }
-        .hero-badge-plus {
-          color: #00FF00;
-          font-weight: 700;
+        .hero-badge-star {
+          color: #7CFF9C;
           font-size: 14px;
+          text-shadow: 0 0 8px rgba(124, 255, 156, 0.7);
         }
       `}</style>
 
@@ -100,7 +105,7 @@ export function Hero() {
         {/* Transparent Canvas with Chrome Liquid Centerpiece */}
         <AnimatedHeroBackground />
 
-        {/* Thin Circular Ring & Crosshair Lines Behind 3D Centerpiece */}
+        {/* Thin Single Circle Outline Behind 3D Centerpiece */}
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
           <div
             style={{
@@ -108,20 +113,20 @@ export function Hero() {
               left: '50%',
               top: '50%',
               transform: 'translate(-50%, -50%)',
-              width: 'min(70vmin, 660px)',
-              height: 'min(70vmin, 660px)',
+              width: 'min(72vmin, 680px)',
+              height: 'min(72vmin, 680px)',
               borderRadius: '50%',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
             }}
           />
           <div
             style={{
               position: 'absolute',
-              left: '43%',
-              top: '43%',
+              left: '42%',
+              top: '42%',
               transform: 'translate(-50%, -50%)',
-              width: 'min(88vmin, 840px)',
-              height: 'min(88vmin, 840px)',
+              width: 'min(90vmin, 860px)',
+              height: 'min(90vmin, 860px)',
               borderRadius: '50%',
               border: '1px solid rgba(255, 255, 255, 0.08)',
             }}
@@ -139,35 +144,34 @@ export function Hero() {
             width: '100%',
           }}
         >
-          {/* Top Left: Green Pill Badge */}
+          {/* Top Left: Badge with 4-Point Green Star ✦ */}
           <div>
             <span className="hero-badge">
-              <span className="hero-badge-plus">+</span> open for projects
+              <span className="hero-badge-star">✦</span> open for projects
             </span>
           </div>
 
-          {/* Top Center: Logo "we.zon" */}
+          {/* Top Center: Logo "we.zon" (with dot, NOT plus) */}
           <a
             href="#hero"
             style={{
               color: '#ffffff',
-              fontFamily: 'Orbitron, "Space Grotesk", sans-serif',
-              fontWeight: 900,
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontWeight: 800,
               fontSize: 'clamp(26px, 2.5vw, 36px)',
               letterSpacing: '-0.02em',
               textDecoration: 'none',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '2px',
               lineHeight: 1,
             }}
           >
             <span>we</span>
-            <span style={{ fontSize: '0.75em', fontWeight: 900 }}>+</span>
+            <span style={{ margin: '0 1px' }}>.</span>
             <span>zon</span>
           </a>
 
-          {/* Top Right: Single Arrow "→" */}
+          {/* Top Right: Simple "→" Thin Arrow */}
           <div>
             <a
               href="#system"
@@ -209,28 +213,16 @@ export function Hero() {
               width: '100%',
             }}
           >
-            <h1
-              className="hero-heading"
-              style={{ fontSize: 'clamp(28px, 3.8vw, 56px)' }}
-            >
+            <h1 className="hero-heading" style={{ fontSize: 'clamp(28px, 3.8vw, 56px)' }}>
               YOUR BUSINESS
             </h1>
-            <h1
-              className="hero-heading"
-              style={{ fontSize: 'clamp(28px, 3.8vw, 56px)' }}
-            >
+            <h1 className="hero-heading" style={{ fontSize: 'clamp(28px, 3.8vw, 56px)' }}>
               HAS A VISION.
             </h1>
           </div>
 
           {/* Left Numbered Navigation List */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              margin: 'auto 0',
-            }}
-          >
+          <div style={{ display: 'flex', alignItems: 'center', margin: 'auto 0' }}>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {navItems.map((item) => (
                 <a key={item.id} href={item.href} className="hero-nav-link">
@@ -270,7 +262,7 @@ export function Hero() {
           </div>
         </div>
 
-        {/* ── BOTTOM FOOTER BORDER LINE ── */}
+        {/* ── BOTTOM FOOTER BORDER LINE & CRAB MARKS ── */}
         <footer
           style={{
             position: 'relative',
@@ -281,10 +273,11 @@ export function Hero() {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
+            color: 'rgba(255, 255, 255, 0.55)',
           }}
         >
-          <PixelMatrixMark />
-          <PixelMatrixMark />
+          <CrabMark />
+          <CrabMark />
         </footer>
       </section>
     </>
