@@ -1,22 +1,19 @@
 import React from 'react';
 import { AnimatedHeroBackground } from './AnimatedHeroBackground';
 
-// "Crab" marker for bottom corners — body + two claws + crosshair
-const CrabMark = () => (
-  <svg width="46" height="30" viewBox="0 0 46 30" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-    {/* left claw */}
-    <path d="M2 6 L2 16 L8 16" />
-    <path d="M2 12 L6 12" />
-    {/* right claw */}
-    <path d="M44 6 L44 16 L38 16" />
-    <path d="M44 12 L40 12" />
-    {/* body — rounded rectangle */}
-    <rect x="10" y="8" width="26" height="16" rx="3" />
-    {/* legs (bottom) */}
-    <path d="M14 24 L14 28 M20 24 L20 28 M26 24 L26 28 M32 24 L32 28" />
-    {/* eyes / crosshair */}
-    <circle cx="18" cy="16" r="1.4" fill="currentColor" stroke="none" />
-    <circle cx="28" cy="16" r="1.4" fill="currentColor" stroke="none" />
+// Bottom corner pixel matrix marker (two 2x2 grid patterns with center cross)
+const PixelMatrixMark = () => (
+  <svg width="24" height="14" viewBox="0 0 24 14" fill="currentColor">
+    {/* Left 2x2 cluster */}
+    <rect x="0" y="0" width="3.5" height="3.5" />
+    <rect x="5.5" y="0" width="3.5" height="3.5" />
+    <rect x="0" y="5.5" width="3.5" height="3.5" />
+    <rect x="5.5" y="5.5" width="3.5" height="3.5" />
+    {/* Right 2x2 cluster */}
+    <rect x="14" y="0" width="3.5" height="3.5" />
+    <rect x="19.5" y="0" width="3.5" height="3.5" />
+    <rect x="14" y="5.5" width="3.5" height="3.5" />
+    <rect x="19.5" y="5.5" width="3.5" height="3.5" />
   </svg>
 );
 
@@ -32,87 +29,57 @@ export function Hero() {
   return (
     <>
       <style>{`
-        @keyframes heroFadeIn {
-          from { opacity: 0; transform: translateY(12px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Syne:wght@700;800;900&display=swap');
 
-        .hero-scatter-text {
-          color: rgba(255, 255, 255, 0.9);
-          font-family: 'Space Grotesk', 'Syne', sans-serif;
-          font-weight: 500;
-          font-size: clamp(20px, 3vw, 40px);
-          letter-spacing: 0.01em;
+        .hero-font-heading {
+          font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-weight: 700;
+          letter-spacing: -0.01em;
           text-transform: uppercase;
-          transition: color 0.35s ease, text-shadow 0.35s ease;
-          cursor: default;
-        }
-        .hero-scatter-text:hover {
           color: #ffffff;
-          text-shadow:
-            0 0 12px rgba(255, 255, 255, 0.9),
-            0 0 28px rgba(255, 255, 255, 0.55),
-            0 0 60px rgba(255, 255, 255, 0.35);
         }
 
-        .hero-side-nav a {
+        .hero-nav-item {
           display: flex;
           align-items: center;
-          gap: 14px;
-          font-family: 'Space Grotesk', 'Syne', sans-serif;
-          font-weight: 500;
-          font-size: clamp(16px, 1.25vw, 20px);
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.9);
+          gap: 12px;
+          font-family: 'Space Grotesk', sans-serif;
+          font-weight: 600;
+          font-size: clamp(14px, 1.1vw, 18px);
+          letter-spacing: 0.08em;
+          color: rgba(255, 255, 255, 0.85);
           text-decoration: none;
-          transition: color 0.25s ease, transform 0.25s ease;
+          transition: color 0.2s ease, transform 0.2s ease;
         }
-        .hero-side-nav a:hover {
+        .hero-nav-item:hover {
           color: #ffffff;
-          transform: translateX(6px);
+          transform: translateX(4px);
         }
-        .hero-side-nav .num {
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: 0.85em;
-          opacity: 0.7;
+        .hero-nav-num {
+          font-family: 'Space Grotesk', monospace;
+          font-weight: 500;
+          opacity: 0.6;
         }
 
-        .hero-pill {
+        .hero-badge {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          padding: 6px 12px;
-          border: 1px solid rgba(255,255,255,0.18);
+          padding: 6px 16px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
           border-radius: 999px;
-          font-family: 'Syne', sans-serif;
-          font-size: 12px;
-          letter-spacing: 0.08em;
-          color: rgba(255,255,255,0.85);
-          background: rgba(255,255,255,0.03);
+          background: rgba(255, 255, 255, 0.04);
+          backdrop-filter: blur(8px);
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: 13px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.9);
+          letter-spacing: 0.02em;
         }
-        .hero-pill .dot {
-          display: inline-block;
-          color: #7CFF9C;
+        .hero-badge .plus {
+          color: #00ff55;
+          font-weight: 700;
           font-size: 14px;
-          line-height: 1;
-          text-shadow: 0 0 8px rgba(124,255,156,0.7);
-        }
-
-        .hero-arrow {
-          width: 40px; height: 40px; border-radius: 999px;
-          border: 1px solid rgba(255,255,255,0.2);
-          display: inline-flex; align-items: center; justify-content: center;
-          color: #fff; text-decoration: none;
-          transition: background 0.25s ease, transform 0.25s ease;
-        }
-        .hero-arrow:hover { background: rgba(255,255,255,0.08); transform: translate(2px,-2px); }
-
-        .hero-ring {
-          position: absolute;
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 50%;
-          pointer-events: none;
         }
       `}</style>
 
@@ -121,112 +88,261 @@ export function Hero() {
         style={{
           position: 'relative',
           width: '100%',
-          minHeight: '100svh',
-          background: '#080808',
-          padding: 'clamp(20px, 3vw, 40px) clamp(24px, 5vw, 64px)',
+          height: '100vh',
+          minHeight: '680px',
+          background: '#050505',
           boxSizing: 'border-box',
           overflow: 'hidden',
           userSelect: 'none',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: 'clamp(20px, 3vh, 36px) clamp(24px, 4vw, 56px)',
         }}
       >
-        {/* Background video */}
+        {/* WebGL 3D Centerpiece & Background Vectors */}
         <AnimatedHeroBackground />
 
-        {/* Concentric decorative rings behind video */}
-        <div className="hero-ring" style={{ width: '60vmin', height: '60vmin', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} />
-        <div className="hero-ring" style={{ width: '90vmin', height: '90vmin', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', opacity: 0.6 }} />
+        {/* ── Background Precision Overlay Guide Lines & Circles ── */}
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
+          {/* Main Centered Thin Circle */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 'min(72vmin, 680px)',
+              height: 'min(72vmin, 680px)',
+              borderRadius: '50%',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+            }}
+          />
+          {/* Intersecting Off-Center Thin Arc Circle */}
+          <div
+            style={{
+              position: 'absolute',
+              left: '42%',
+              top: '42%',
+              transform: 'translate(-50%, -50%)',
+              width: 'min(90vmin, 860px)',
+              height: 'min(90vmin, 860px)',
+              borderRadius: '50%',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+            }}
+          />
+          {/* Horizontal Axis Line */}
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: '50%',
+              height: '1px',
+              background: 'rgba(255, 255, 255, 0.06)',
+            }}
+          />
+          {/* Vertical Axis Line */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: '53.5%',
+              width: '1px',
+              background: 'rgba(255, 255, 255, 0.05)',
+            }}
+          />
+        </div>
 
-        {/* Top bar */}
+        {/* ── TOP HEADER BAR ── */}
         <header
           style={{
-            position: 'relative', zIndex: 10,
-            display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center',
-            gap: 16, animation: 'heroFadeIn 0.8s ease both 0.1s',
+            position: 'relative',
+            zIndex: 10,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
           }}
         >
+          {/* Left: Status Badge */}
           <div>
-            <span className="hero-pill"><span className="dot">✦</span> open for projects</span>
+            <span className="hero-badge">
+              <span className="plus">+</span> open for projects
+            </span>
           </div>
-          <a href="#hero" style={{
-            color: '#fff', fontFamily: 'Syne, sans-serif', fontWeight: 900,
-            fontSize: 'clamp(22px, 2.2vw, 32px)', letterSpacing: '-0.03em',
-            textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 2, lineHeight: 1,
-          }}>
+
+          {/* Center Logo: we+zon */}
+          <a
+            href="#hero"
+            style={{
+              color: '#ffffff',
+              fontFamily: 'Syne, "Space Grotesk", sans-serif',
+              fontWeight: 800,
+              fontSize: 'clamp(26px, 2.5vw, 36px)',
+              letterSpacing: '-0.02em',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '2px',
+              lineHeight: 1,
+            }}
+          >
             <span>we</span>
-            <span style={{ fontSize: '0.7em', margin: '0 1px' }}>✦</span>
+            <span style={{ fontSize: '0.75em', fontWeight: 900, opacity: 0.95 }}>+</span>
             <span>zon</span>
           </a>
-          <div style={{ justifySelf: 'end' }}>
-            <a href="#system" className="hero-arrow" aria-label="next">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M7 17L17 7M17 7H8M17 7v9" />
+
+          {/* Right: Arrow Nav */}
+          <div>
+            <a
+              href="#system"
+              style={{
+                color: '#ffffff',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '4px',
+                transition: 'transform 0.2s ease',
+              }}
+              aria-label="Next Section"
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>
           </div>
         </header>
 
-        {/* Row 1 */}
+        {/* ── MIDDLE CONTENT LAYER ── */}
         <div
           style={{
-            position: 'relative', zIndex: 10,
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            width: '100%', marginTop: 'clamp(12px, 2vh, 28px)',
-            animation: 'heroFadeIn 0.8s ease both 0.25s',
+            position: 'relative',
+            zIndex: 10,
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            paddingTop: 'clamp(16px, 3vh, 32px)',
+            paddingBottom: 'clamp(16px, 3vh, 32px)',
           }}
         >
-          <span className="hero-scatter-text">YOUR BUSINESS</span>
-          <span className="hero-scatter-text">HAS A VISION.</span>
+          {/* Row 1: YOUR BUSINESS ... HAS A VISION. */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            <h1
+              className="hero-font-heading"
+              style={{
+                fontSize: 'clamp(28px, 3.8vw, 56px)',
+                margin: 0,
+              }}
+            >
+              YOUR BUSINESS
+            </h1>
+            <h1
+              className="hero-font-heading"
+              style={{
+                fontSize: 'clamp(28px, 3.8vw, 56px)',
+                margin: 0,
+              }}
+            >
+              HAS A VISION.
+            </h1>
+          </div>
+
+          {/* Vertical Middle Area: Left Navigation 01-05 */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              margin: 'auto 0',
+            }}
+          >
+            <nav
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+              }}
+            >
+              {navItems.map((item) => (
+                <a key={item.id} href={item.href} className="hero-nav-item">
+                  <span className="hero-nav-num">{item.id}</span>
+                  <span>{item.label}</span>
+                </a>
+              ))}
+            </nav>
+          </div>
+
+          {/* Row 2: WE BUILD ... THE ZONE ... AROUND IT. */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr auto 1fr',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            <div style={{ textAlign: 'left' }}>
+              <span
+                className="hero-font-heading"
+                style={{
+                  fontSize: 'clamp(26px, 3.6vw, 52px)',
+                }}
+              >
+                WE BUILD
+              </span>
+            </div>
+
+            <div style={{ textAlign: 'center' }}>
+              <span
+                className="hero-font-heading"
+                style={{
+                  fontSize: 'clamp(26px, 3.6vw, 52px)',
+                }}
+              >
+                THE ZONE
+              </span>
+            </div>
+
+            <div style={{ textAlign: 'right' }}>
+              <span
+                className="hero-font-heading"
+                style={{
+                  fontSize: 'clamp(26px, 3.6vw, 52px)',
+                }}
+              >
+                AROUND IT.
+              </span>
+            </div>
+          </div>
         </div>
 
-        {/* Spacer above nav */}
-        <div style={{ flex: 1 }} />
-
-        {/* Left numbered nav — vertically centered between Row 1 and Row 2 */}
-        <nav
-          className="hero-side-nav"
+        {/* ── BOTTOM FOOTER BORDER LINE & MARKS ── */}
+        <footer
           style={{
-            position: 'relative', zIndex: 10,
-            display: 'flex', flexDirection: 'column', gap: 8,
-            maxWidth: 240,
-            animation: 'heroFadeIn 0.8s ease both 0.4s',
+            position: 'relative',
+            zIndex: 10,
+            width: '100%',
+            paddingTop: '16px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.15)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            color: 'rgba(255, 255, 255, 0.6)',
           }}
         >
-          {navItems.map((n) => (
-            <a key={n.id} href={n.href}>
-              <span className="num">{n.id}</span>
-              <span>{n.label}</span>
-            </a>
-          ))}
-        </nav>
-
-        {/* Spacer pushes Row 2 to the bottom */}
-        <div style={{ flex: 1 }} />
-
-        {/* Row 2 */}
-        <div
-          style={{
-            position: 'relative', zIndex: 10,
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            width: '100%', marginTop: 'clamp(20px, 4vh, 40px)',
-            animation: 'heroFadeIn 0.8s ease both 0.55s',
-          }}
-        >
-          <span className="hero-scatter-text">WE BUILD</span>
-          <span className="hero-scatter-text" style={{ transform: 'translateX(-5%)' }}>THE ZONE</span>
-          <span className="hero-scatter-text">AROUND IT.</span>
-        </div>
-
-        {/* Bottom corner "crab" markers */}
-        <div style={{
-          position: 'absolute', left: 'clamp(24px, 5vw, 64px)', right: 'clamp(24px, 5vw, 64px)',
-          bottom: 24, zIndex: 10, display: 'flex', justifyContent: 'space-between',
-          color: 'rgba(255,255,255,0.55)',
-        }}>
-          <CrabMark />
-          <CrabMark />
-        </div>
+          <PixelMatrixMark />
+          <PixelMatrixMark />
+        </footer>
       </section>
     </>
   );
