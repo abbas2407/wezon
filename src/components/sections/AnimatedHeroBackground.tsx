@@ -1,5 +1,4 @@
 import React from 'react';
-import { DropletOverlay } from './DropletOverlay';
 
 /**
  * Hero background: HTML5 <video> playing the cinematic 3D liquid platinum clip.
@@ -56,11 +55,6 @@ export const AnimatedHeroBackground: React.FC = () => {
         >
           <source src="/liquid-platinum.webm" type="video/webm" />
         </video>
-      </div>
-
-      {/* Cursor-reactive droplets around the ring */}
-      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        <DropletOverlay />
       </div>
     </div>
   );
