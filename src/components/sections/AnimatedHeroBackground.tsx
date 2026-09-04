@@ -1,6 +1,15 @@
 import React from 'react';
-import { Hero3DCanvas } from './Hero3DCanvas';
 
+/**
+ * Hero background: HTML5 <video> playing the cinematic 3D liquid platinum clip.
+ *
+ * - `mix-blend-mode: screen` merges any dark background of the video into the
+ *   solid black hero surface, so the platinum edges never show a hard box.
+ * - `pointer-events: none` on both wrapper and video keeps clicks/hover flowing
+ *   through to the hero UI (nav, links, badges) on top.
+ * - Sized identically to the previous 3D canvas so the surrounding circle
+ *   overlays and typography stay pixel-aligned.
+ */
 export const AnimatedHeroBackground: React.FC = () => {
   return (
     <div
@@ -15,8 +24,6 @@ export const AnimatedHeroBackground: React.FC = () => {
         backgroundColor: '#000000',
       }}
     >
-      {/* Centered canvas constrained vertically so the liquid platinum sits between
-          the top logo row and the bottom "WE BUILD / THE ZONE / AROUND IT." row */}
       <div
         style={{
           position: 'absolute',
@@ -25,12 +32,27 @@ export const AnimatedHeroBackground: React.FC = () => {
           transform: 'translate(-50%, -50%)',
           width: 'min(66vmin, 680px)',
           height: 'min(66vmin, 680px)',
-          pointerEvents: 'auto',
+          pointerEvents: 'none',
+          mixBlendMode: 'screen',
         }}
       >
-        <Hero3DCanvas />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          style={{
+            display: 'block',
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            pointerEvents: 'none',
+          }}
+        >
+          <source src="/liquid-platinum.webm" type="video/webm" />
+        </video>
       </div>
     </div>
   );
 };
-
