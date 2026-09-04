@@ -98,27 +98,51 @@ export function WhatWeBuild() {
           background: #fff;
         }
 
-        .wwb-title {
-          font-family: 'Syne', 'Space Grotesk', sans-serif;
-          font-weight: 500;
-          font-size: clamp(30px, 5vw, 76px);
-          letter-spacing: -0.01em;
+        .wwb-title-wrap {
+          position: relative;
+          display: inline-block;
           line-height: 1;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.55);
-          transform-origin: left center;
-          transform: scaleX(1);
-          white-space: nowrap;
-          transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                      color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                      font-weight 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-                      letter-spacing 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+          overflow: hidden;
+          padding: 0.08em 0;
         }
-        .wwb-row.is-active .wwb-title {
-          transform: scaleX(1.10);
+        .wwb-title-sans,
+        .wwb-title-serif {
+          display: block;
+          font-size: clamp(30px, 5vw, 76px);
+          line-height: 1;
+          white-space: nowrap;
+          transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                      opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                      color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .wwb-title-sans {
+          font-family: 'Syne', 'Space Grotesk', sans-serif;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: -0.01em;
+          color: rgba(255,255,255,0.55);
+          transform: translateY(0);
+          opacity: 1;
+        }
+        .wwb-title-serif {
+          position: absolute;
+          left: 0; top: 0.08em;
+          font-family: 'Instrument Serif', 'Playfair Display', serif;
+          font-style: italic;
+          font-weight: 400;
+          text-transform: none;
+          letter-spacing: -0.005em;
           color: #ffffff;
-          font-weight: 900;
-          letter-spacing: -0.03em;
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        .wwb-row.is-active .wwb-title-sans {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        .wwb-row.is-active .wwb-title-serif {
+          transform: translateY(0);
+          opacity: 1;
         }
 
         .wwb-details {
@@ -233,7 +257,10 @@ export function WhatWeBuild() {
               >
                 <div style={{ display: 'flex', alignItems: 'baseline' }}>
                   <span className="wwb-num">{item.id}</span>
-                  <span className="wwb-title">{item.title}</span>
+                  <span className="wwb-title-wrap">
+                    <span className="wwb-title-sans">{item.title}</span>
+                    <span className="wwb-title-serif" aria-hidden>{item.title}</span>
+                  </span>
                 </div>
                 <div className="wwb-details">
                   <p className="wwb-desc">{item.desc}</p>
