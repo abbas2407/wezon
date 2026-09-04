@@ -32,21 +32,23 @@ const buildItems = [
 ];
 
 export function WhatWeBuild() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const stickyRef  = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const listRef    = useRef<HTMLDivElement>(null);
   const rowRefs    = useRef<(HTMLDivElement | null)[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
   const overrideUntilRef = useRef(0);
 
-  // ── Pinned scroll stack ─────────────────────────────────────────
+  // ── Pin the section and drive active index by scroll progress ──
   useEffect(() => {
-    if (!wrapperRef.current || !stickyRef.current) return;
+    if (!sectionRef.current) return;
 
     const st = ScrollTrigger.create({
-      trigger: wrapperRef.current,
+      trigger: sectionRef.current,
       start: 'top top',
       end: `+=${buildItems.length * 100}%`,
-      pin: stickyRef.current,
+      pin: true,
+      pinSpacing: true,
+      anticipatePin: 1,
       scrub: 0.6,
       onUpdate: (self) => {
         if (Date.now() < overrideUntilRef.current) return;
@@ -58,69 +60,90 @@ export function WhatWeBuild() {
       },
     });
 
-    return () => { st.kill(); };
+    // Refresh once fonts settle so start/end are accurate
+    const refreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), 250);
+
+    return () => {
+      window.clearTimeout(refreshTimer);
+      st.kill();
+    };
   }, []);
 
-  // ── Animate rows when active index changes ──────────────────────
+  // ── Kinetic upward slide + stretch when active changes ─────────
   useEffect(() => {
+    if (!listRef.current) return;
+
+    // Translate the whole list so the active row lines up with the highlight band.
+    const rowH = rowRefs.current[0]?.getBoundingClientRect().height || 100;
+    gsap.to(listRef.current, {
+      y: -activeIdx * rowH,
+      duration: 0.9,
+      ease: 'power3.out',
+    });
+
     rowRefs.current.forEach((el, i) => {
       if (!el) return;
       const isActive = i === activeIdx;
+      const title   = el.querySelector<HTMLElement>('[data-row-title]');
+      const details = el.querySelector<HTMLElement>('[data-details]');
+      const bar     = el.querySelector<HTMLElement>('[data-bar]');
+
       gsap.to(el, {
-        opacity: isActive ? 1 : 0.35,
+        opacity: isActive ? 1 : 0.3,
         duration: 0.55,
         ease: 'power2.out',
       });
-      const details = el.querySelector<HTMLElement>('[data-details]');
-      const title   = el.querySelector<HTMLElement>('[data-row-title]');
+
+      if (title) {
+        gsap.to(title, {
+          scaleX: isActive ? 1.14 : 1.0,
+          color: isActive ? '#ffffff' : 'rgba(255,255,255,0.55)',
+          fontWeight: isActive ? 900 : 500,
+          letterSpacing: isActive ? '-0.03em' : '-0.01em',
+          duration: 0.6,
+          ease: 'power3.out',
+          transformOrigin: 'left center',
+        });
+      }
       if (details) {
         gsap.to(details, {
-          height: isActive ? 'auto' : 0,
-          opacity: isActive ? 1 : 0,
-          y: isActive ? 0 : 12,
+          autoAlpha: isActive ? 1 : 0,
+          x: isActive ? 0 : 24,
           duration: 0.55,
           ease: 'power2.out',
         });
       }
-      if (title) {
-        gsap.to(title, {
-          color: isActive ? '#ffffff' : 'rgba(255,255,255,0.5)',
-          duration: 0.35,
+      if (bar) {
+        gsap.to(bar, {
+          scaleX: isActive ? 1 : 0,
+          opacity: isActive ? 1 : 0,
+          duration: 0.6,
           ease: 'power2.out',
+          transformOrigin: 'left center',
         });
       }
     });
   }, [activeIdx]);
 
-  const handleActivate = (idx: number) => {
+  const activate = (i: number) => {
     overrideUntilRef.current = Date.now() + 800;
-    setActiveIdx(idx);
+    setActiveIdx(i);
   };
 
   return (
     <>
       <style>{`
-        .wwb-row {
-          position: relative;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
-          transition: background 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-          cursor: pointer;
-        }
-        .wwb-row[data-active="true"] {
-          background:
-            linear-gradient(90deg,
-              rgba(90, 100, 160, 0.10) 0%,
-              rgba(30, 30, 44, 0.35) 55%,
-              rgba(20, 20, 30, 0.15) 100%);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-        }
-        .wwb-row[data-active="true"]::before {
-          content: '';
-          position: absolute;
-          left: 0; top: 0; bottom: 0;
-          width: 2px;
-          background: #ffffff;
+        .wwb-title {
+          font-family: 'Syne', 'Space Grotesk', sans-serif;
+          font-weight: 500;
+          font-size: clamp(36px, 6vw, 92px);
+          letter-spacing: -0.01em;
+          line-height: 1;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.55);
+          transform-origin: left center;
+          will-change: transform, color, font-weight;
+          white-space: nowrap;
         }
         .wwb-pill {
           display: inline-flex;
@@ -138,128 +161,161 @@ export function WhatWeBuild() {
         }
         .wwb-pill:hover {
           transform: scale(1.05);
-          background: rgba(255,255,255,0.12);
-          color: #ffffff;
+          background: rgba(255,255,255,0.14);
+          color: #fff;
+        }
+        .wwb-glow-bar {
+          position: absolute;
+          left: -4vw;
+          right: -4vw;
+          top: 0;
+          bottom: 0;
+          background:
+            linear-gradient(90deg,
+              rgba(120,130,200,0.10) 0%,
+              rgba(40,40,60,0.35) 40%,
+              rgba(20,20,30,0.0) 100%);
+          filter: blur(0.5px);
+          pointer-events: none;
+          transform: scaleX(0);
+          opacity: 0;
         }
       `}</style>
 
-      <div
-        ref={wrapperRef}
+      <section
+        ref={sectionRef}
         id="build"
         style={{
           position: 'relative',
           width: '100%',
+          height: '100vh',
           background: '#000',
+          color: '#fff',
+          overflow: 'hidden',
+          padding: 'clamp(48px, 6vw, 80px) clamp(24px, 4vw, 56px)',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        <div
-          ref={stickyRef}
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12,
+          fontSize: 12, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.5)',
+          fontFamily: 'JetBrains Mono, monospace' }}>
+          FROM IDEA TO INFRASTRUCTURE
+          <span style={{ opacity: 0.5 }}>✕</span>
+        </div>
+
+        <h2
+          data-letter-fade
           style={{
-            width: '100%',
-            minHeight: '100vh',
-            padding: 'clamp(60px, 8vw, 100px) clamp(24px, 4vw, 56px)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            color: '#fff',
+            fontFamily: 'Syne, Space Grotesk, sans-serif',
+            fontWeight: 800,
+            fontSize: 'clamp(28px, 3.6vw, 56px)',
+            lineHeight: 1,
+            letterSpacing: '-0.02em',
+            textTransform: 'uppercase',
+            margin: '0 0 24px 0',
           }}
         >
-          <div
-            className="flex items-center gap-4 mb-6"
-            style={{ fontSize: 12, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.5)' }}
-          >
-            <span style={{ fontFamily: 'JetBrains Mono, monospace' }}>FROM IDEA TO INFRASTRUCTURE</span>
-            <span style={{ color: 'rgba(255,255,255,0.3)' }}>✕</span>
-          </div>
+          WHAT WE BUILD
+        </h2>
 
-          <h2
-            data-letter-fade
-            style={{
-              fontFamily: 'Orbitron, Space Grotesk, sans-serif',
-              fontWeight: 800,
-              fontSize: 'clamp(36px, 4.5vw, 68px)',
-              lineHeight: 1,
-              letterSpacing: '-0.02em',
-              textTransform: 'uppercase',
-              margin: '0 0 32px 0',
-            }}
-          >
-            WHAT WE BUILD
-          </h2>
-
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        {/* Scrolling list stage — a viewport for the translated list */}
+        <div style={{
+          position: 'relative',
+          flex: 1,
+          overflow: 'hidden',
+          borderTop: '1px solid rgba(255,255,255,0.08)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+        }}>
+          {/* Highlight band sits behind at row 0's position; the list translates up */}
+          <div ref={listRef} style={{
+            position: 'absolute',
+            left: 0, right: 0, top: 0,
+            willChange: 'transform',
+          }}>
             {buildItems.map((item, i) => (
               <div
                 key={item.id}
                 ref={(el) => (rowRefs.current[i] = el)}
-                className="wwb-row"
-                data-active={i === activeIdx}
-                onMouseEnter={() => handleActivate(i)}
-                onClick={() => handleActivate(i)}
-                style={{ opacity: i === activeIdx ? 1 : 0.35 }}
+                onMouseEnter={() => activate(i)}
+                onClick={() => activate(i)}
+                style={{
+                  position: 'relative',
+                  padding: 'clamp(22px, 2.6vw, 36px) clamp(8px, 2vw, 24px)',
+                  display: 'grid',
+                  gridTemplateColumns: '1fr auto',
+                  alignItems: 'center',
+                  gap: 24,
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  cursor: 'pointer',
+                  opacity: i === activeIdx ? 1 : 0.3,
+                }}
               >
-                <div
-                  style={{
-                    padding: 'clamp(20px, 3vw, 32px) clamp(16px, 3vw, 40px)',
-                    display: 'grid',
-                    gridTemplateColumns: '1fr auto',
-                    alignItems: 'center',
-                    gap: 24,
-                  }}
-                >
-                  <div
-                    data-row-title
-                    style={{
-                      fontFamily: 'Orbitron, Space Grotesk, sans-serif',
-                      fontWeight: 800,
-                      fontSize: 'clamp(28px, 4.2vw, 58px)',
-                      letterSpacing: '-0.02em',
-                      textTransform: 'uppercase',
-                      lineHeight: 1,
-                      color: i === activeIdx ? '#ffffff' : 'rgba(255,255,255,0.5)',
-                    }}
-                  >
-                    <span style={{
-                      fontFamily: 'JetBrains Mono, monospace',
-                      fontSize: '0.42em',
-                      opacity: 0.6,
-                      marginRight: 12,
-                      verticalAlign: 'middle',
-                    }}>{item.id}</span>
-                    {item.title}
-                  </div>
+                <span data-bar className="wwb-glow-bar" />
 
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                    {item.tags.map((t) => (
-                      <span key={t} className="wwb-pill">{t}</span>
-                    ))}
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 18, position: 'relative' }}>
+                  <span style={{
+                    fontFamily: 'JetBrains Mono, monospace',
+                    fontSize: 12,
+                    opacity: 0.55,
+                  }}>{item.id}</span>
+                  <span data-row-title className="wwb-title">{item.title}</span>
                 </div>
 
                 <div
                   data-details
                   style={{
-                    overflow: 'hidden',
-                    height: i === activeIdx ? 'auto' : 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: 12,
+                    maxWidth: 460,
                     opacity: i === activeIdx ? 1 : 0,
+                    visibility: i === activeIdx ? 'visible' : 'hidden',
                   }}
                 >
-                  <div style={{
-                    padding: '0 clamp(16px, 3vw, 40px) clamp(24px, 3vw, 32px)',
-                    color: 'rgba(255,255,255,0.65)',
-                    fontSize: 15,
-                    lineHeight: 1.6,
-                    maxWidth: 640,
+                  <p style={{
+                    margin: 0,
+                    color: 'rgba(255,255,255,0.7)',
+                    fontSize: 14,
+                    lineHeight: 1.55,
+                    textAlign: 'right',
+                    fontFamily: 'Space Grotesk, sans-serif',
                   }}>
                     {item.desc}
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-end' }}>
+                    {item.tags.map((t) => (
+                      <span key={t} className="wwb-pill">{t}</span>
+                    ))}
                   </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </div>
+
+        {/* Progress indicator */}
+        <div style={{
+          marginTop: 20,
+          display: 'flex', alignItems: 'center', gap: 12,
+          color: 'rgba(255,255,255,0.5)', fontSize: 11,
+          fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.2em',
+        }}>
+          <span>{String(activeIdx + 1).padStart(2, '0')} / {String(buildItems.length).padStart(2, '0')}</span>
+          <div style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.1)', position: 'relative' }}>
+            <div style={{
+              position: 'absolute', left: 0, top: 0, bottom: 0,
+              width: `${((activeIdx + 1) / buildItems.length) * 100}%`,
+              background: '#fff',
+              transition: 'width 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+            }} />
+          </div>
+        </div>
+      </section>
     </>
   );
 }
