@@ -30,10 +30,10 @@ export const AnimatedHeroBackground: React.FC = () => {
           left: '50%',
           top: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 'min(66vmin, 680px)',
-          height: 'min(66vmin, 680px)',
+          width: 'min(78vmin, 820px)',
+          height: 'min(78vmin, 820px)',
           pointerEvents: 'none',
-          mixBlendMode: 'screen',
+          mixBlendMode: 'lighten',
         }}
       >
         <video
@@ -46,7 +46,7 @@ export const AnimatedHeroBackground: React.FC = () => {
             display: 'block',
             width: '100%',
             height: '100%',
-            objectFit: 'contain',
+            objectFit: 'cover',
             pointerEvents: 'none',
           }}
         >
