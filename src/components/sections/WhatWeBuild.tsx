@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitType from 'split-type';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,16 +34,66 @@ const buildItems = [
 
 export function WhatWeBuild() {
   const sectionRef = useRef<HTMLElement>(null);
+  const rowRefs    = useRef<(HTMLDivElement | null)[]>([]);
+  const timelines  = useRef<gsap.core.Timeline[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
   const overrideUntilRef = useRef(0);
 
+  // ── Build per-row char-stagger timelines once mounted ─────────
+  useLayoutEffect(() => {
+    const splits: SplitType[] = [];
+
+    rowRefs.current.forEach((row) => {
+      if (!row) return;
+      const sans  = row.querySelector<HTMLElement>('.wwb-title-sans');
+      const serif = row.querySelector<HTMLElement>('.wwb-title-serif');
+      if (!sans || !serif) return;
+
+      const sSans  = new SplitType(sans,  { types: 'chars', tagName: 'span' });
+      const sSerif = new SplitType(serif, { types: 'chars', tagName: 'span' });
+      splits.push(sSans, sSerif);
+
+      // Wrap each char so we can translateY inside a clipped parent
+      [sSans, sSerif].forEach((s) => {
+        (s.chars || []).forEach((c) => {
+          (c as HTMLElement).style.display = 'inline-block';
+          (c as HTMLElement).style.willChange = 'transform, opacity';
+        });
+      });
+      gsap.set(sSerif.chars, { yPercent: 100, opacity: 0 });
+
+      const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } });
+      tl.to(sSans.chars, {
+        yPercent: -110,
+        opacity: 0,
+        duration: 0.35,
+        stagger: 0.022,
+      }, 0);
+      tl.to(sSerif.chars, {
+        yPercent: 0,
+        opacity: 1,
+        duration: 0.35,
+        stagger: 0.022,
+      }, 0.02);
+
+      timelines.current.push(tl);
+    });
+
+    return () => {
+      timelines.current.forEach((tl) => tl.kill());
+      timelines.current = [];
+      splits.forEach((s) => s.revert());
+    };
+  }, []);
+
+  // ── Pin the section — tight scroll length, no trailing void ──
   useLayoutEffect(() => {
     if (!sectionRef.current) return;
 
     const st = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top top',
-      end: '+=150%',
+      end: `+=${buildItems.length * 100}%`, // one viewport per row, snappy
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
@@ -57,9 +108,17 @@ export function WhatWeBuild() {
       },
     });
 
-    const t = window.setTimeout(() => ScrollTrigger.refresh(), 250);
+    const t = window.setTimeout(() => ScrollTrigger.refresh(), 300);
     return () => { window.clearTimeout(t); st.kill(); };
   }, []);
+
+  // ── Play / reverse per-row timelines when active changes ─────
+  useEffect(() => {
+    timelines.current.forEach((tl, i) => {
+      if (i === activeIdx) tl.play();
+      else                 tl.reverse();
+    });
+  }, [activeIdx]);
 
   const activate = (i: number) => {
     overrideUntilRef.current = Date.now() + 800;
@@ -111,9 +170,6 @@ export function WhatWeBuild() {
           font-size: clamp(30px, 5vw, 76px);
           line-height: 1;
           white-space: nowrap;
-          transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-                      opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-                      color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .wwb-title-sans {
           font-family: 'Syne', 'Space Grotesk', sans-serif;
@@ -121,9 +177,8 @@ export function WhatWeBuild() {
           text-transform: uppercase;
           letter-spacing: -0.01em;
           color: rgba(255,255,255,0.55);
-          transform: translateY(0);
-          opacity: 1;
         }
+        .wwb-row.is-active .wwb-title-sans { color: rgba(255,255,255,0.85); }
         .wwb-title-serif {
           position: absolute;
           left: 0; top: 0.08em;
@@ -133,16 +188,6 @@ export function WhatWeBuild() {
           text-transform: none;
           letter-spacing: -0.005em;
           color: #ffffff;
-          transform: translateY(100%);
-          opacity: 0;
-        }
-        .wwb-row.is-active .wwb-title-sans {
-          transform: translateY(-100%);
-          opacity: 0;
-        }
-        .wwb-row.is-active .wwb-title-serif {
-          transform: translateY(0);
-          opacity: 1;
         }
 
         .wwb-details {
@@ -164,7 +209,6 @@ export function WhatWeBuild() {
           opacity: 1;
           transform: translateX(0);
         }
-
         .wwb-desc {
           margin: 0;
           color: rgba(255,255,255,0.7);
@@ -218,7 +262,7 @@ export function WhatWeBuild() {
           borderBottom: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        {/* Sticky header (pinned with section — always visible) */}
+        {/* Sticky header */}
         <header style={{ flexShrink: 0 }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12,
@@ -245,12 +289,13 @@ export function WhatWeBuild() {
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} />
         </header>
 
-        {/* Stable vertical list — rows never move */}
+        {/* Stable list — rows never move */}
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div>
             {buildItems.map((item, i) => (
               <div
                 key={item.id}
+                ref={(el) => (rowRefs.current[i] = el)}
                 className={`wwb-row${i === activeIdx ? ' is-active' : ''}`}
                 onMouseEnter={() => activate(i)}
                 onClick={() => activate(i)}
@@ -275,7 +320,6 @@ export function WhatWeBuild() {
           </div>
         </div>
 
-        {/* Progress indicator */}
         <div style={{
           marginTop: 16, flexShrink: 0,
           display: 'flex', alignItems: 'center', gap: 12,
