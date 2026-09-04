@@ -48,6 +48,9 @@ export const AnimatedHeroBackground: React.FC = () => {
             height: '100%',
             objectFit: 'cover',
             pointerEvents: 'none',
+            // Crush near-black pixels to pure black so mix-blend-mode: lighten
+            // eliminates the visible dark box around the platinum.
+            filter: 'brightness(1.15) contrast(1.55)',
           }}
         >
           <source src="/liquid-platinum.webm" type="video/webm" />
