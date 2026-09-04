@@ -32,49 +32,21 @@ const buildItems = [
 ];
 
 export function WhatWeBuild() {
-  const sectionRef  = useRef<HTMLElement>(null);
-  const stageRef    = useRef<HTMLDivElement>(null);   // scroll viewport
-  const listRef     = useRef<HTMLDivElement>(null);   // translated list
-  const rowRefs     = useRef<(HTMLDivElement | null)[]>([]);
-  const rowHeights  = useRef<number[]>([]);
-  const stageHeight = useRef(0);
+  const sectionRef = useRef<HTMLElement>(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const overrideUntilRef = useRef(0);
 
-  // ── Measure rows and stage height (recompute on resize / font load) ──
-  const measure = () => {
-    rowHeights.current = rowRefs.current.map((el) =>
-      el ? el.getBoundingClientRect().height : 0
-    );
-    stageHeight.current = stageRef.current?.getBoundingClientRect().height || 0;
-  };
-
-  // ── Compute Y translation so the active row centres on the highlight ──
-  const translateForIdx = (idx: number) => {
-    const rowH = rowHeights.current[idx] || 100;
-    // Sum heights of rows before the active one
-    let offset = 0;
-    for (let i = 0; i < idx; i++) offset += rowHeights.current[i] || 0;
-    // Move so active row's centre lines up with stage centre
-    const stageCentre = stageHeight.current / 2;
-    return -(offset + rowH / 2 - stageCentre);
-  };
-
-  // ── Pin the section and drive active index by scroll progress ─────────
   useLayoutEffect(() => {
     if (!sectionRef.current) return;
-
-    // Initial measurement after paint
-    requestAnimationFrame(measure);
 
     const st = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top top',
-      end: `+=${(buildItems.length - 1) * 80 + 60}%`, // ≈ 300% for 4 rows
+      end: '+=150%',
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
-      scrub: 0.55,
+      scrub: 0.5,
       onUpdate: (self) => {
         if (Date.now() < overrideUntilRef.current) return;
         const idx = Math.min(
@@ -85,70 +57,9 @@ export function WhatWeBuild() {
       },
     });
 
-    const onResize = () => { measure(); ScrollTrigger.refresh(); };
-    window.addEventListener('resize', onResize);
-    const refreshT = window.setTimeout(() => { measure(); ScrollTrigger.refresh(); }, 250);
-
-    return () => {
-      window.removeEventListener('resize', onResize);
-      window.clearTimeout(refreshT);
-      st.kill();
-    };
+    const t = window.setTimeout(() => ScrollTrigger.refresh(), 250);
+    return () => { window.clearTimeout(t); st.kill(); };
   }, []);
-
-  // ── Animate rows when active index changes ────────────────────────────
-  useEffect(() => {
-    if (!listRef.current) return;
-
-    gsap.to(listRef.current, {
-      y: translateForIdx(activeIdx),
-      duration: 0.85,
-      ease: 'power3.out',
-    });
-
-    rowRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const isActive = i === activeIdx;
-      const title   = el.querySelector<HTMLElement>('[data-row-title]');
-      const details = el.querySelector<HTMLElement>('[data-details]');
-      const bar     = el.querySelector<HTMLElement>('[data-bar]');
-
-      gsap.to(el, {
-        opacity: isActive ? 1 : 0.3,
-        duration: 0.55,
-        ease: 'power2.out',
-      });
-
-      if (title) {
-        gsap.to(title, {
-          scaleX: isActive ? 1.15 : 1.0,
-          color: isActive ? '#ffffff' : 'rgba(255,255,255,0.55)',
-          fontWeight: isActive ? 900 : 500,
-          letterSpacing: isActive ? '-0.03em' : '-0.01em',
-          duration: 0.6,
-          ease: 'power3.out',
-          transformOrigin: 'left center',
-        });
-      }
-      if (details) {
-        gsap.to(details, {
-          autoAlpha: isActive ? 1 : 0,
-          x: isActive ? 0 : 24,
-          duration: 0.55,
-          ease: 'power2.out',
-        });
-      }
-      if (bar) {
-        gsap.to(bar, {
-          scaleX: isActive ? 1 : 0,
-          opacity: isActive ? 1 : 0,
-          duration: 0.6,
-          ease: 'power2.out',
-          transformOrigin: 'left center',
-        });
-      }
-    });
-  }, [activeIdx]);
 
   const activate = (i: number) => {
     overrideUntilRef.current = Date.now() + 800;
@@ -158,18 +69,87 @@ export function WhatWeBuild() {
   return (
     <>
       <style>{`
+        .wwb-row {
+          position: relative;
+          display: grid;
+          grid-template-columns: 1fr auto;
+          align-items: center;
+          gap: 24px;
+          padding: clamp(18px, 2.2vw, 28px) clamp(8px, 2vw, 24px);
+          border-bottom: 1px solid rgba(255,255,255,0.06);
+          cursor: pointer;
+          opacity: 0.3;
+          transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                      background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .wwb-row.is-active {
+          opacity: 1;
+          background:
+            linear-gradient(90deg,
+              rgba(120,130,200,0.10) 0%,
+              rgba(40,40,60,0.30) 45%,
+              rgba(20,20,30,0) 100%);
+        }
+        .wwb-row.is-active::before {
+          content: '';
+          position: absolute;
+          left: 0; top: 0; bottom: 0;
+          width: 2px;
+          background: #fff;
+        }
+
         .wwb-title {
           font-family: 'Syne', 'Space Grotesk', sans-serif;
           font-weight: 500;
-          font-size: clamp(34px, 5.6vw, 84px);
+          font-size: clamp(30px, 5vw, 76px);
           letter-spacing: -0.01em;
           line-height: 1;
           text-transform: uppercase;
           color: rgba(255,255,255,0.55);
           transform-origin: left center;
+          transform: scaleX(1);
           white-space: nowrap;
-          will-change: transform, color, font-weight;
+          transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                      color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                      font-weight 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                      letter-spacing 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        .wwb-row.is-active .wwb-title {
+          transform: scaleX(1.10);
+          color: #ffffff;
+          font-weight: 900;
+          letter-spacing: -0.03em;
+        }
+
+        .wwb-details {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 12px;
+          max-width: 460px;
+          overflow: hidden;
+          max-height: 0;
+          opacity: 0;
+          transform: translateX(24px);
+          transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                      opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .wwb-row.is-active .wwb-details {
+          max-height: 300px;
+          opacity: 1;
+          transform: translateX(0);
+        }
+
+        .wwb-desc {
+          margin: 0;
+          color: rgba(255,255,255,0.7);
+          font-size: 14px;
+          line-height: 1.55;
+          text-align: right;
+          font-family: 'Space Grotesk', sans-serif;
+        }
+        .wwb-pill-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
         .wwb-pill {
           display: inline-flex;
           align-items: center;
@@ -189,28 +169,11 @@ export function WhatWeBuild() {
           background: rgba(255,255,255,0.14);
           color: #fff;
         }
-        .wwb-glow-bar {
-          position: absolute;
-          left: -6vw;
-          right: -6vw;
-          top: 0;
-          bottom: 0;
-          background:
-            linear-gradient(90deg,
-              rgba(120,130,200,0.10) 0%,
-              rgba(40,40,60,0.30) 40%,
-              rgba(20,20,30,0) 100%);
-          pointer-events: none;
-          transform: scaleX(0);
-          opacity: 0;
-        }
-        .wwb-hilite {
-          position: absolute;
-          left: 0; right: 0;
-          top: 50%;
-          height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
-          pointer-events: none;
+        .wwb-num {
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: 12px;
+          opacity: 0.55;
+          margin-right: 18px;
         }
       `}</style>
 
@@ -231,7 +194,7 @@ export function WhatWeBuild() {
           borderBottom: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        {/* Sticky Header (stays visible during entire section pin) */}
+        {/* Sticky header (pinned with section — always visible) */}
         <header style={{ flexShrink: 0 }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12,
@@ -258,79 +221,23 @@ export function WhatWeBuild() {
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} />
         </header>
 
-        {/* Scrolling list stage */}
-        <div
-          ref={stageRef}
-          style={{
-            position: 'relative',
-            flex: 1,
-            overflow: 'hidden',
-            marginTop: 8,
-          }}
-        >
-          {/* Central highlight line marking the active zone */}
-          <div className="wwb-hilite" />
-
-          <div
-            ref={listRef}
-            style={{
-              position: 'absolute',
-              left: 0, right: 0, top: 0,
-              willChange: 'transform',
-            }}
-          >
+        {/* Stable vertical list — rows never move */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div>
             {buildItems.map((item, i) => (
               <div
                 key={item.id}
-                ref={(el) => (rowRefs.current[i] = el)}
+                className={`wwb-row${i === activeIdx ? ' is-active' : ''}`}
                 onMouseEnter={() => activate(i)}
                 onClick={() => activate(i)}
-                style={{
-                  position: 'relative',
-                  padding: 'clamp(22px, 2.6vw, 36px) clamp(8px, 2vw, 24px)',
-                  display: 'grid',
-                  gridTemplateColumns: '1fr auto',
-                  alignItems: 'center',
-                  gap: 24,
-                  borderBottom: '1px solid rgba(255,255,255,0.05)',
-                  cursor: 'pointer',
-                  opacity: i === activeIdx ? 1 : 0.3,
-                }}
               >
-                <span data-bar className="wwb-glow-bar" />
-
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 18, position: 'relative' }}>
-                  <span style={{
-                    fontFamily: 'JetBrains Mono, monospace',
-                    fontSize: 12,
-                    opacity: 0.55,
-                  }}>{item.id}</span>
-                  <span data-row-title className="wwb-title">{item.title}</span>
+                <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                  <span className="wwb-num">{item.id}</span>
+                  <span className="wwb-title">{item.title}</span>
                 </div>
-
-                <div
-                  data-details
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-end',
-                    gap: 12,
-                    maxWidth: 460,
-                    opacity: i === activeIdx ? 1 : 0,
-                    visibility: i === activeIdx ? 'visible' : 'hidden',
-                  }}
-                >
-                  <p style={{
-                    margin: 0,
-                    color: 'rgba(255,255,255,0.7)',
-                    fontSize: 14,
-                    lineHeight: 1.55,
-                    textAlign: 'right',
-                    fontFamily: 'Space Grotesk, sans-serif',
-                  }}>
-                    {item.desc}
-                  </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-end' }}>
+                <div className="wwb-details">
+                  <p className="wwb-desc">{item.desc}</p>
+                  <div className="wwb-pill-row">
                     {item.tags.map((t) => (
                       <span key={t} className="wwb-pill">{t}</span>
                     ))}
@@ -354,7 +261,7 @@ export function WhatWeBuild() {
               position: 'absolute', left: 0, top: 0, bottom: 0,
               width: `${((activeIdx + 1) / buildItems.length) * 100}%`,
               background: '#fff',
-              transition: 'width 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+              transition: 'width 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
             }} />
           </div>
         </div>
