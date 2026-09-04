@@ -128,6 +128,7 @@ export function StrategySystemsGrowth() {
           ref={(el) => (cardRefs.current[0] = el)}
           onMouseMove={(e) => handleMouseMove(e, 0)}
           onMouseLeave={() => handleMouseLeave(0)}
+          data-reveal
           className="relative bg-[#0b0b0b] border border-white/10 p-8 md:p-10 flex flex-col justify-between overflow-hidden transition-transform duration-200 ease-out min-h-[440px]"
           style={{ transformStyle: 'preserve-3d' }}
         >

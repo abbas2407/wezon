@@ -1,171 +1,217 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const showcaseProjects = [
+gsap.registerPlugin(ScrollTrigger);
+
+const projects = [
   {
     id: '01',
     name: 'LIVORA SPATIAL',
     category: 'E-COMMERCE / SPATIAL 3D',
     desc: 'Luxury furniture retail transformed into a zero-latency interactive spatial 3D experience with real-time room configuration.',
-    stats: '+142% Avg Order Value · 60fps WebGL',
-    previewUrl: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
-    laptopUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+    stats: '+142% AOV · 60fps WebGL',
+    img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
   },
   {
     id: '02',
-    name: 'TAILORME ARCHITECTURE',
+    name: 'TAILORME',
     category: 'INTELLIGENT FASHION ERP',
-    desc: 'Redefining bespoke tailoring with computerized 3D measurement mapping, autonomous inventory pipelines, and global client portals.',
-    stats: '84% Reduction in Lead Time · Enterprise ERP',
-    previewUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80',
-    laptopUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
+    desc: 'Bespoke tailoring with computerized 3D measurement mapping, autonomous inventory pipelines, and global client portals.',
+    stats: '84% lead-time cut · Enterprise ERP',
+    img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    id: '03',
+    name: 'INTERIA STUDIO',
+    category: 'INTERIOR DESIGN PORTAL',
+    desc: 'Interior design catalog with immersive project pages, client portal, and AI-driven mood-board generator.',
+    stats: '3.2× consultation conversion',
+    img: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    id: '04',
+    name: 'FLUX OPERATIONS',
+    category: 'REAL-TIME OPS DASHBOARD',
+    desc: 'Real-time operations dashboard aggregating supply-chain, revenue, and support signals into one command surface.',
+    stats: '5× faster decision loop',
+    img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80',
   },
 ];
 
 export function BuiltInZone() {
-  const [activeCase, setActiveCase] = useState(0);
-  const current = showcaseProjects[activeCase];
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const trackRef   = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!wrapperRef.current || !trackRef.current) return;
+
+    const track = trackRef.current;
+    const scrollLen = () => track.scrollWidth - window.innerWidth;
+
+    const st = ScrollTrigger.create({
+      trigger: wrapperRef.current,
+      pin: true,
+      pinSpacing: true,
+      start: 'top top',
+      end: () => `+=${scrollLen()}`,
+      scrub: 1,
+      invalidateOnRefresh: true,
+      animation: gsap.to(track, {
+        x: () => -scrollLen(),
+        ease: 'none',
+      }),
+    });
+
+    const t = window.setTimeout(() => ScrollTrigger.refresh(), 300);
+    return () => { window.clearTimeout(t); st.kill(); };
+  }, []);
 
   return (
-    <section
-      id="work"
-      className="relative bg-black text-white overflow-hidden"
-      style={{
-        padding: 'clamp(60px, 8vw, 120px) clamp(24px, 4vw, 56px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-      }}
-    >
-      {/* Header Bar */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 relative">
-        {/* Subtle background concentric vector arc */}
-        <div className="absolute -top-12 -right-12 w-64 h-64 rounded-full border border-white/10 pointer-events-none" />
+    <>
+      <style>{`
+        .biz-header {
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          padding: clamp(28px, 4vw, 56px) clamp(24px, 4vw, 56px) 0;
+          display: flex; justify-content: space-between; align-items: baseline;
+          z-index: 5;
+          pointer-events: none;
+        }
+        .biz-eyebrow {
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: 12px;
+          letter-spacing: 0.25em;
+          color: rgba(255,255,255,0.5);
+        }
+        .biz-title {
+          font-family: 'Syne', 'Space Grotesk', sans-serif;
+          font-weight: 800;
+          font-size: clamp(32px, 4vw, 64px);
+          line-height: 1;
+          letter-spacing: -0.02em;
+          text-transform: uppercase;
+          color: #fff;
+          margin: 0;
+        }
 
-        <div>
-          <h2
-            data-letter-fade
-            className="text-white font-bold leading-none tracking-tight uppercase"
-            style={{
-              fontFamily: 'Orbitron, Space Grotesk, sans-serif',
-              fontSize: 'clamp(32px, 4vw, 60px)',
-            }}
-          >
-            BUILT IN ZONE
-          </h2>
-          <div className="flex items-center gap-3 mt-4 text-[12px] tracking-[0.25em] text-white/50 font-mono">
-            <span>BUILT. TESTED. MOVED.</span>
-            <span className="text-white/30">✕</span>
-          </div>
+        .biz-track {
+          display: flex;
+          align-items: center;
+          height: 100vh;
+          padding: 0 8vw;
+          gap: 5vw;
+          will-change: transform;
+        }
+        .biz-card {
+          flex: 0 0 auto;
+          width: min(72vw, 780px);
+          background: #0d0d0d;
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 8px;
+          overflow: hidden;
+          display: grid;
+          grid-template-columns: 1.15fr 1fr;
+          transition: border-color 0.3s ease, transform 0.35s ease;
+        }
+        .biz-card:hover { border-color: rgba(255,255,255,0.22); }
+        .biz-card-media {
+          position: relative;
+          background: #111;
+          overflow: hidden;
+        }
+        .biz-card-media img {
+          width: 100%; height: 100%;
+          object-fit: cover;
+          filter: brightness(0.85);
+          transition: transform 0.6s ease;
+        }
+        .biz-card:hover .biz-card-media img { transform: scale(1.06); }
+        .biz-card-body {
+          padding: clamp(24px, 3vw, 40px);
+          display: flex; flex-direction: column; justify-content: space-between;
+          gap: 24px;
+        }
+        .biz-card-cat {
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: 11px;
+          letter-spacing: 0.22em;
+          color: #7CFF9C;
+        }
+        .biz-card-name {
+          font-family: 'Syne', 'Space Grotesk', sans-serif;
+          font-weight: 800;
+          font-size: clamp(24px, 2.6vw, 40px);
+          line-height: 1.05;
+          letter-spacing: -0.02em;
+          text-transform: uppercase;
+          color: #fff;
+          margin: 8px 0 12px;
+        }
+        .biz-card-desc {
+          color: rgba(255,255,255,0.65);
+          font-size: 14px;
+          line-height: 1.6;
+          font-family: 'Space Grotesk', sans-serif;
+        }
+        .biz-card-stats {
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: 12px;
+          color: rgba(255,255,255,0.5);
+          letter-spacing: 0.05em;
+        }
+        .biz-card-link {
+          font-family: 'JetBrains Mono', ui-monospace, monospace;
+          font-size: 12px;
+          letter-spacing: 0.2em;
+          color: #fff;
+          text-decoration: none;
+          display: inline-flex; align-items: center; gap: 8px;
+          margin-top: 8px;
+        }
+      `}</style>
+
+      <div
+        id="work"
+        ref={wrapperRef}
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100vh',
+          background: '#000',
+          overflow: 'hidden',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+        }}
+      >
+        <div className="biz-header">
+          <span className="biz-eyebrow">BUILT · TESTED · MOVED</span>
+          <h2 className="biz-title" data-letter-fade>BUILT IN ZONE</h2>
         </div>
 
-        {/* Case switcher tabs */}
-        <div className="flex items-center gap-3">
-          {showcaseProjects.map((p, idx) => (
-            <button
-              key={p.id}
-              onClick={() => setActiveCase(idx)}
-              className="px-4 py-2 text-xs font-mono tracking-wider transition-all duration-200 border rounded-sm"
-              style={{
-                borderColor: activeCase === idx ? '#ffffff' : 'rgba(255, 255, 255, 0.2)',
-                backgroundColor: activeCase === idx ? '#ffffff' : 'transparent',
-                color: activeCase === idx ? '#000000' : 'rgba(255, 255, 255, 0.6)',
-              }}
-            >
-              CASE {p.id}
-            </button>
+        <div className="biz-track" ref={trackRef}>
+          {projects.map((p) => (
+            <article className="biz-card" key={p.id} data-hover-scale>
+              <div className="biz-card-media">
+                <img data-parallax="6" src={p.img} alt={p.name} />
+              </div>
+              <div className="biz-card-body">
+                <div>
+                  <div className="biz-card-cat">CASE {p.id} · {p.category}</div>
+                  <h3 className="biz-card-name">{p.name}</h3>
+                  <p className="biz-card-desc" data-line-reveal>{p.desc}</p>
+                </div>
+                <div>
+                  <div className="biz-card-stats">METRIC · {p.stats}</div>
+                  <a href="#contact" className="biz-card-link">
+                    <span data-hover-stagger>EXPLORE CASE</span>
+                    <span>→</span>
+                  </a>
+                </div>
+              </div>
+            </article>
           ))}
         </div>
       </div>
-
-      {/* Dark Glassmorphic Showcase Container Matching Reference Image */}
-      <div
-        className="relative bg-[#0a0a0a] border border-white/10 p-6 md:p-12 overflow-hidden rounded-md"
-        style={{
-          boxShadow: '0 20px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-        }}
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
-          {/* ── LEFT: PROJECT DETAILS & SPECS ── */}
-          <div className="lg:col-span-5 flex flex-col justify-between min-h-[340px]">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono bg-white/5 border border-white/15 text-[#7CFF9C] mb-6">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#7CFF9C] animate-pulse" />
-                <span>CASE {current.id}</span>
-                <span className="text-white/30">/</span>
-                <span className="text-white/70">{current.category}</span>
-              </div>
-
-              <h3
-                className="text-white font-bold uppercase tracking-tight mb-4"
-                style={{
-                  fontFamily: 'Orbitron, Space Grotesk, sans-serif',
-                  fontSize: 'clamp(28px, 3vw, 44px)',
-                  lineHeight: 1.1,
-                }}
-              >
-                {current.name}
-              </h3>
-
-              <p data-line-reveal className="text-white/60 text-sm md:text-base leading-relaxed font-sans max-w-md mb-6">
-                {current.desc}
-              </p>
-
-              <div className="text-xs font-mono text-white/40 tracking-wider mb-8">
-                METRIC: {current.stats}
-              </div>
-            </div>
-
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-3 text-xs font-mono tracking-[0.2em] text-white hover:text-white/80 transition-colors uppercase"
-            >
-              <span data-hover-stagger>EXPLORE CASE</span>
-              <span className="text-sm">→</span>
-            </a>
-          </div>
-
-          {/* ── RIGHT: SLEEK LAPTOP & UI MOCKUP VIEWPORT ── */}
-          <div className="lg:col-span-7 flex flex-col gap-4">
-            
-            {/* Top Dashboard Floating Strip Mockup */}
-            <div className="w-full bg-[#141414] border border-white/10 rounded-t-lg p-3 flex items-center justify-between text-xs font-mono text-white/50">
-              <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
-                <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
-                <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
-                <span className="ml-3 text-[11px] text-white/40">app.wezon.zone/{current.name.toLowerCase().replace(' ', '-')}</span>
-              </div>
-              <span className="text-[11px] text-[#7CFF9C]">LIVE ● 60FPS</span>
-            </div>
-
-            {/* Laptop Screen Hardware Mockup Frame */}
-            <div
-              className="relative w-full bg-[#050505] border border-white/15 rounded-b-xl overflow-hidden p-2 shadow-2xl"
-              style={{
-                aspectRatio: '16/10',
-              }}
-            >
-              <div className="w-full h-full rounded-lg overflow-hidden relative group">
-                <img
-                  data-parallax="8"
-                  src={current.laptopUrl}
-                  alt={current.name}
-                  className="w-full h-full object-cover object-center filter brightness-90 group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
-                
-                {/* Tech overlay grid line and gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
-                
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs font-mono text-white/80">
-                  <span>[SPATIAL RENDERING: 4K HDR]</span>
-                  <span className="text-white/60">SYSTEM INTEGRITY 100%</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </div>
-    </section>
+    </>
   );
 }

@@ -160,7 +160,39 @@ export function useSiteAnimations(enabled: boolean) {
         });
       });
 
-      // ── 7. Live IST clock (HH:MM) ───────────────────────────────────
+      // ── 7. Reveal-text fade-up on scroll ────────────────────────────
+      document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
+        gsap.fromTo(
+          el,
+          { y: 60, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.1,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 85%',
+              end: 'top 50%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      });
+
+      // ── 8. Hover scale for cards / links ────────────────────────────
+      document.querySelectorAll<HTMLElement>('[data-hover-scale]').forEach((el) => {
+        const enter = () => gsap.to(el, { scale: 1.03, duration: 0.35, ease: 'power2.out' });
+        const leave = () => gsap.to(el, { scale: 1.00, duration: 0.35, ease: 'power2.out' });
+        el.addEventListener('mouseenter', enter);
+        el.addEventListener('mouseleave', leave);
+        cleanups.push(() => {
+          el.removeEventListener('mouseenter', enter);
+          el.removeEventListener('mouseleave', leave);
+        });
+      });
+
+      // ── 9. Live IST clock (HH:MM) ───────────────────────────────────
       const clock = document.querySelector<HTMLElement>('.clock-ist');
       let clockInterval: number | undefined;
       if (clock) {
