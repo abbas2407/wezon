@@ -47,6 +47,7 @@ export function WhatWeBuild() {
 
       {/* Main Section Headline */}
       <h2
+        data-letter-fade
         className="text-white font-bold leading-none tracking-tight uppercase mb-12"
         style={{
           fontFamily: 'Orbitron, Space Grotesk, sans-serif',

@@ -46,14 +46,14 @@ export function Footer() {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-12 mb-20">
         <div>
           <h2
+            data-letter-fade
             className="text-white font-bold leading-[0.98] tracking-tight uppercase"
             style={{
               fontFamily: 'Orbitron, Space Grotesk, sans-serif',
               fontSize: 'clamp(38px, 5.5vw, 84px)',
             }}
           >
-            LETS BRING YOUR<br />
-            BUSINESS DIGITAL
+            LETS BRING YOUR BUSINESS DIGITAL
           </h2>
         </div>
 
@@ -116,7 +116,7 @@ export function Footer() {
           >
             CONTACT@WEZON.COM
           </a>
-          <span className="text-white/40 mt-2">HYDERABAD // GLOBAL</span>
+          <span className="text-white/40 mt-2">HYDERABAD ✦ <span className="clock-ist">--:--</span> IST</span>
         </div>
 
       </div>

@@ -293,7 +293,7 @@ export function Hero() {
               {navItems.map((item) => (
                 <a key={item.id} href={item.href} className="hero-nav-link">
                   <span className="hero-nav-num">{item.id}</span>
-                  <span>{item.label}</span>
+                  <span data-hover-stagger>{item.label}</span>
                 </a>
               ))}
             </nav>

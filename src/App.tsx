@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Lenis from 'lenis';
+import { useSiteAnimations } from '@/hooks/useSiteAnimations';
 import { Footer } from '@/components/layout/Footer';
 import { Preloader } from '@/components/sections/Preloader';
 import { Hero } from '@/components/sections/Hero';
@@ -13,6 +14,7 @@ import { AboutStatement } from '@/components/sections/AboutStatement';
 
 function App() {
   const [loading, setLoading] = useState(true);
+  useSiteAnimations(!loading);
 
   useEffect(() => {
     const lenis = new Lenis({

@@ -41,6 +41,7 @@ export function BuiltInZone() {
 
         <div>
           <h2
+            data-letter-fade
             className="text-white font-bold leading-none tracking-tight uppercase"
             style={{
               fontFamily: 'Orbitron, Space Grotesk, sans-serif',
@@ -104,7 +105,7 @@ export function BuiltInZone() {
                 {current.name}
               </h3>
 
-              <p className="text-white/60 text-sm md:text-base leading-relaxed font-sans max-w-md mb-6">
+              <p data-line-reveal className="text-white/60 text-sm md:text-base leading-relaxed font-sans max-w-md mb-6">
                 {current.desc}
               </p>
 
@@ -117,7 +118,7 @@ export function BuiltInZone() {
               href="#contact"
               className="inline-flex items-center gap-3 text-xs font-mono tracking-[0.2em] text-white hover:text-white/80 transition-colors uppercase"
             >
-              <span>EXPLORE CASE</span>
+              <span data-hover-stagger>EXPLORE CASE</span>
               <span className="text-sm">→</span>
             </a>
           </div>
@@ -145,6 +146,7 @@ export function BuiltInZone() {
             >
               <div className="w-full h-full rounded-lg overflow-hidden relative group">
                 <img
+                  data-parallax="8"
                   src={current.laptopUrl}
                   alt={current.name}
                   className="w-full h-full object-cover object-center filter brightness-90 group-hover:scale-105 transition-transform duration-700 ease-out"

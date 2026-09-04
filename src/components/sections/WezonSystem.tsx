@@ -53,20 +53,19 @@ export function WezonSystem() {
               THE WE✦ZON SYSTEM
             </div>
             <h2
+              data-letter-fade
               className="text-white font-bold leading-[1.02] tracking-tight uppercase"
               style={{
                 fontFamily: 'Orbitron, Space Grotesk, sans-serif',
                 fontSize: 'clamp(32px, 3.8vw, 54px)',
               }}
             >
-              ONE SYSTEM.<br />
-              EVERY DIGITAL<br />
-              TOUCHPOINT.
+              ONE SYSTEM. EVERY DIGITAL TOUCHPOINT.
             </h2>
           </div>
 
           <div className="mt-12 z-10">
-            <p className="text-white/60 text-[15px] leading-relaxed font-sans max-w-[340px]">
+            <p data-line-reveal className="text-white/60 text-[15px] leading-relaxed font-sans max-w-[340px]">
               WE✦ZON brings strategy, design, technology, and growth under one cohesive, connected architecture.
             </p>
             <div className="mt-6 flex items-center gap-2 text-white/30 font-mono text-xs">

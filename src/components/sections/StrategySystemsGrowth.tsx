@@ -137,13 +137,14 @@ export function StrategySystemsGrowth() {
 
           <div>
             <h2
+              data-letter-fade
               className="text-white font-bold leading-[1.05] tracking-tight uppercase"
               style={{
                 fontFamily: 'Orbitron, Space Grotesk, sans-serif',
                 fontSize: 'clamp(26px, 2.5vw, 38px)',
               }}
             >
-              DATA THAT TURNS<br />INTO BUSINESS<br />IMPACT
+              DATA THAT TURNS INTO BUSINESS IMPACT
             </h2>
           </div>
 
