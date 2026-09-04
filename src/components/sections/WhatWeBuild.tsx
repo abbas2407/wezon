@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -32,24 +32,49 @@ const buildItems = [
 ];
 
 export function WhatWeBuild() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const listRef    = useRef<HTMLDivElement>(null);
-  const rowRefs    = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRef  = useRef<HTMLElement>(null);
+  const stageRef    = useRef<HTMLDivElement>(null);   // scroll viewport
+  const listRef     = useRef<HTMLDivElement>(null);   // translated list
+  const rowRefs     = useRef<(HTMLDivElement | null)[]>([]);
+  const rowHeights  = useRef<number[]>([]);
+  const stageHeight = useRef(0);
   const [activeIdx, setActiveIdx] = useState(0);
   const overrideUntilRef = useRef(0);
 
-  // ── Pin the section and drive active index by scroll progress ──
-  useEffect(() => {
+  // ── Measure rows and stage height (recompute on resize / font load) ──
+  const measure = () => {
+    rowHeights.current = rowRefs.current.map((el) =>
+      el ? el.getBoundingClientRect().height : 0
+    );
+    stageHeight.current = stageRef.current?.getBoundingClientRect().height || 0;
+  };
+
+  // ── Compute Y translation so the active row centres on the highlight ──
+  const translateForIdx = (idx: number) => {
+    const rowH = rowHeights.current[idx] || 100;
+    // Sum heights of rows before the active one
+    let offset = 0;
+    for (let i = 0; i < idx; i++) offset += rowHeights.current[i] || 0;
+    // Move so active row's centre lines up with stage centre
+    const stageCentre = stageHeight.current / 2;
+    return -(offset + rowH / 2 - stageCentre);
+  };
+
+  // ── Pin the section and drive active index by scroll progress ─────────
+  useLayoutEffect(() => {
     if (!sectionRef.current) return;
+
+    // Initial measurement after paint
+    requestAnimationFrame(measure);
 
     const st = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top top',
-      end: `+=${buildItems.length * 100}%`,
+      end: `+=${(buildItems.length - 1) * 80 + 60}%`, // ≈ 300% for 4 rows
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
-      scrub: 0.6,
+      scrub: 0.55,
       onUpdate: (self) => {
         if (Date.now() < overrideUntilRef.current) return;
         const idx = Math.min(
@@ -60,24 +85,24 @@ export function WhatWeBuild() {
       },
     });
 
-    // Refresh once fonts settle so start/end are accurate
-    const refreshTimer = window.setTimeout(() => ScrollTrigger.refresh(), 250);
+    const onResize = () => { measure(); ScrollTrigger.refresh(); };
+    window.addEventListener('resize', onResize);
+    const refreshT = window.setTimeout(() => { measure(); ScrollTrigger.refresh(); }, 250);
 
     return () => {
-      window.clearTimeout(refreshTimer);
+      window.removeEventListener('resize', onResize);
+      window.clearTimeout(refreshT);
       st.kill();
     };
   }, []);
 
-  // ── Kinetic upward slide + stretch when active changes ─────────
+  // ── Animate rows when active index changes ────────────────────────────
   useEffect(() => {
     if (!listRef.current) return;
 
-    // Translate the whole list so the active row lines up with the highlight band.
-    const rowH = rowRefs.current[0]?.getBoundingClientRect().height || 100;
     gsap.to(listRef.current, {
-      y: -activeIdx * rowH,
-      duration: 0.9,
+      y: translateForIdx(activeIdx),
+      duration: 0.85,
       ease: 'power3.out',
     });
 
@@ -96,7 +121,7 @@ export function WhatWeBuild() {
 
       if (title) {
         gsap.to(title, {
-          scaleX: isActive ? 1.14 : 1.0,
+          scaleX: isActive ? 1.15 : 1.0,
           color: isActive ? '#ffffff' : 'rgba(255,255,255,0.55)',
           fontWeight: isActive ? 900 : 500,
           letterSpacing: isActive ? '-0.03em' : '-0.01em',
@@ -136,14 +161,14 @@ export function WhatWeBuild() {
         .wwb-title {
           font-family: 'Syne', 'Space Grotesk', sans-serif;
           font-weight: 500;
-          font-size: clamp(36px, 6vw, 92px);
+          font-size: clamp(34px, 5.6vw, 84px);
           letter-spacing: -0.01em;
           line-height: 1;
           text-transform: uppercase;
           color: rgba(255,255,255,0.55);
           transform-origin: left center;
-          will-change: transform, color, font-weight;
           white-space: nowrap;
+          will-change: transform, color, font-weight;
         }
         .wwb-pill {
           display: inline-flex;
@@ -166,19 +191,26 @@ export function WhatWeBuild() {
         }
         .wwb-glow-bar {
           position: absolute;
-          left: -4vw;
-          right: -4vw;
+          left: -6vw;
+          right: -6vw;
           top: 0;
           bottom: 0;
           background:
             linear-gradient(90deg,
               rgba(120,130,200,0.10) 0%,
-              rgba(40,40,60,0.35) 40%,
-              rgba(20,20,30,0.0) 100%);
-          filter: blur(0.5px);
+              rgba(40,40,60,0.30) 40%,
+              rgba(20,20,30,0) 100%);
           pointer-events: none;
           transform: scaleX(0);
           opacity: 0;
+        }
+        .wwb-hilite {
+          position: absolute;
+          left: 0; right: 0;
+          top: 50%;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+          pointer-events: none;
         }
       `}</style>
 
@@ -199,43 +231,54 @@ export function WhatWeBuild() {
           borderBottom: '1px solid rgba(255,255,255,0.08)',
         }}
       >
-        {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12,
-          fontSize: 12, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.5)',
-          fontFamily: 'JetBrains Mono, monospace' }}>
-          FROM IDEA TO INFRASTRUCTURE
-          <span style={{ opacity: 0.5 }}>✕</span>
-        </div>
+        {/* Sticky Header (stays visible during entire section pin) */}
+        <header style={{ flexShrink: 0 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12,
+            fontSize: 12, letterSpacing: '0.25em', color: 'rgba(255,255,255,0.5)',
+            fontFamily: 'JetBrains Mono, monospace',
+          }}>
+            FROM IDEA TO INFRASTRUCTURE
+            <span style={{ opacity: 0.5 }}>✕</span>
+          </div>
+          <h2
+            data-letter-fade
+            style={{
+              fontFamily: 'Syne, Space Grotesk, sans-serif',
+              fontWeight: 800,
+              fontSize: 'clamp(28px, 3.6vw, 56px)',
+              lineHeight: 1,
+              letterSpacing: '-0.02em',
+              textTransform: 'uppercase',
+              margin: '0 0 24px 0',
+            }}
+          >
+            WHAT WE BUILD
+          </h2>
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} />
+        </header>
 
-        <h2
-          data-letter-fade
+        {/* Scrolling list stage */}
+        <div
+          ref={stageRef}
           style={{
-            fontFamily: 'Syne, Space Grotesk, sans-serif',
-            fontWeight: 800,
-            fontSize: 'clamp(28px, 3.6vw, 56px)',
-            lineHeight: 1,
-            letterSpacing: '-0.02em',
-            textTransform: 'uppercase',
-            margin: '0 0 24px 0',
+            position: 'relative',
+            flex: 1,
+            overflow: 'hidden',
+            marginTop: 8,
           }}
         >
-          WHAT WE BUILD
-        </h2>
+          {/* Central highlight line marking the active zone */}
+          <div className="wwb-hilite" />
 
-        {/* Scrolling list stage — a viewport for the translated list */}
-        <div style={{
-          position: 'relative',
-          flex: 1,
-          overflow: 'hidden',
-          borderTop: '1px solid rgba(255,255,255,0.08)',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-        }}>
-          {/* Highlight band sits behind at row 0's position; the list translates up */}
-          <div ref={listRef} style={{
-            position: 'absolute',
-            left: 0, right: 0, top: 0,
-            willChange: 'transform',
-          }}>
+          <div
+            ref={listRef}
+            style={{
+              position: 'absolute',
+              left: 0, right: 0, top: 0,
+              willChange: 'transform',
+            }}
+          >
             {buildItems.map((item, i) => (
               <div
                 key={item.id}
@@ -249,7 +292,7 @@ export function WhatWeBuild() {
                   gridTemplateColumns: '1fr auto',
                   alignItems: 'center',
                   gap: 24,
-                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  borderBottom: '1px solid rgba(255,255,255,0.05)',
                   cursor: 'pointer',
                   opacity: i === activeIdx ? 1 : 0.3,
                 }}
@@ -300,7 +343,7 @@ export function WhatWeBuild() {
 
         {/* Progress indicator */}
         <div style={{
-          marginTop: 20,
+          marginTop: 16, flexShrink: 0,
           display: 'flex', alignItems: 'center', gap: 12,
           color: 'rgba(255,255,255,0.5)', fontSize: 11,
           fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.2em',
