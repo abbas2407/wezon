@@ -93,7 +93,7 @@ export function WhatWeBuild() {
     const st = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top top',
-      end: `+=${buildItems.length * 100}%`, // one viewport per row, snappy
+      end: '+=250%', // tighter — no trailing void
       pin: true,
       pinSpacing: true,
       anticipatePin: 1,
