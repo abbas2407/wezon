@@ -22,6 +22,12 @@ export function useSiteAnimations(enabled: boolean) {
 
     gsap.registerPlugin(ScrollTrigger);
 
+    // Recompute ScrollTrigger positions once web fonts finish loading so that
+    // pinned start/end offsets stay aligned even after layout shifts.
+    if ((document as any).fonts?.ready) {
+      (document as any).fonts.ready.then(() => ScrollTrigger.refresh());
+    }
+
     // Give the DOM a tick to settle (fonts, layout) — matches source site.
     const setupTimer = window.setTimeout(() => setup(), 200);
 

@@ -72,7 +72,7 @@ export function BuiltInZone() {
       scrollTrigger: {
         trigger: sectionRef.current,
         start: 'top top',
-        end: `+=${cardsEls.length * 100}%`,
+        end: '+=200%',
         pin: pinTargetRef.current,
         pinSpacing: true,
         scrub: 0.6,
@@ -88,9 +88,9 @@ export function BuiltInZone() {
 
       const label = `card${i}`;
       tl.addLabel(label);
-      tl.to(incoming, { yPercent: 0, y: 0, ease: 'none', duration: 1 }, label);
-      if (innerU) tl.to(innerU, { scale: 0.96, ease: 'none', duration: 1 }, label);
-      if (cover)  tl.to(cover,  { opacity: 0.55, ease: 'none', duration: 1 }, label);
+      tl.to(incoming, { yPercent: 0, y: 0, ease: 'none', duration: 0.85 }, label);
+      if (innerU) tl.to(innerU, { scale: 0.96, ease: 'none', duration: 0.85 }, label);
+      if (cover)  tl.to(cover,  { opacity: 0.55, ease: 'none', duration: 0.85 }, label);
     }
 
     const refresh = window.setTimeout(() => ScrollTrigger.refresh(), 250);
