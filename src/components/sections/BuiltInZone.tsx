@@ -25,7 +25,7 @@ const cases = [
   },
 ];
 
-// Top-right decorative quarter-arc
+// Top-right decorative quarter-arcs
 const CornerArc = () => (
   <svg
     aria-hidden
@@ -40,39 +40,64 @@ const CornerArc = () => (
 );
 
 export function BuiltInZone() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const cardRefs   = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRef  = useRef<HTMLElement>(null);
+  const pinTargetRef = useRef<HTMLDivElement>(null);
+  const cardRefs    = useRef<(HTMLDivElement | null)[]>([]);
 
   useLayoutEffect(() => {
-    const triggers: ScrollTrigger[] = [];
+    if (!sectionRef.current || !pinTargetRef.current) return;
 
-    cardRefs.current.forEach((card, i) => {
-      if (!card) return;
-      const next = cardRefs.current[i + 1];
-      if (!next) return;
+    const cardsEls = cardRefs.current.filter(Boolean) as HTMLDivElement[];
+    if (!cardsEls.length) return;
 
-      const cover = card.querySelector<HTMLElement>('.biz-cover');
-      const topOffset = 120 + i * 20;
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: next,
-          start: 'top bottom',
-          end: `top top+=${topOffset}`,
-          scrub: 0.6,
-        },
+    // Initial state: card 0 visible; the rest sit below the viewport
+    // with a slight resting y-offset so they peek like a wallet stack when the
+    // section first appears.
+    cardsEls.forEach((el, i) => {
+      const restingPeek = i * 10; // px below when at rest under the top card
+      gsap.set(el, {
+        yPercent: i === 0 ? 0 : 100,
+        y: i === 0 ? 0 : restingPeek,
+        zIndex: i + 1,
       });
-      tl.to(card, { scale: 0.96, ease: 'none' }, 0);
-      if (cover) tl.to(cover, { opacity: 0.55, ease: 'none' }, 0);
-
-      // @ts-ignore
-      triggers.push(tl.scrollTrigger);
+      const cover = el.querySelector<HTMLElement>('.biz-cover');
+      if (cover) gsap.set(cover, { opacity: 0 });
+      const inner = el.querySelector<HTMLElement>('.biz-inner');
+      if (inner) gsap.set(inner, { scale: 1 });
     });
 
-    const t = window.setTimeout(() => ScrollTrigger.refresh(), 250);
+    // Master timeline: for each incoming card, animate yPercent 100→0.
+    // While it comes in, the card underneath scales down + darkens.
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: `+=${cardsEls.length * 100}%`,
+        pin: pinTargetRef.current,
+        pinSpacing: true,
+        scrub: 0.6,
+        anticipatePin: 1,
+      },
+    });
+
+    for (let i = 1; i < cardsEls.length; i++) {
+      const incoming = cardsEls[i];
+      const under    = cardsEls[i - 1];
+      const cover    = under.querySelector<HTMLElement>('.biz-cover');
+      const innerU   = under.querySelector<HTMLElement>('.biz-inner');
+
+      const label = `card${i}`;
+      tl.addLabel(label);
+      tl.to(incoming, { yPercent: 0, y: 0, ease: 'none', duration: 1 }, label);
+      if (innerU) tl.to(innerU, { scale: 0.96, ease: 'none', duration: 1 }, label);
+      if (cover)  tl.to(cover,  { opacity: 0.55, ease: 'none', duration: 1 }, label);
+    }
+
+    const refresh = window.setTimeout(() => ScrollTrigger.refresh(), 250);
     return () => {
-      window.clearTimeout(t);
-      triggers.forEach((s) => s.kill());
+      window.clearTimeout(refresh);
+      tl.scrollTrigger?.kill();
+      tl.kill();
     };
   }, []);
 
@@ -83,12 +108,19 @@ export function BuiltInZone() {
           position: relative;
           background: #000;
           color: #fff;
-          padding: clamp(60px, 8vw, 100px) clamp(24px, 4vw, 56px) clamp(80px, 10vw, 140px);
-          border-bottom: 1px solid rgba(255,255,255,0.08);
           overflow: visible;
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .biz-pin {
+          position: relative;
+          width: 100%;
+          height: 100vh;
+          padding: clamp(60px, 8vw, 100px) clamp(24px, 4vw, 56px);
+          box-sizing: border-box;
+          display: flex; flex-direction: column;
         }
 
-        .biz-header { position: relative; margin-bottom: clamp(40px, 6vw, 72px); max-width: 720px; }
+        .biz-header { position: relative; margin-bottom: clamp(24px, 4vw, 48px); max-width: 720px; }
         .biz-title {
           font-family: 'Syne', 'Space Grotesk', sans-serif;
           font-weight: 800;
@@ -111,11 +143,20 @@ export function BuiltInZone() {
         }
         .biz-eyebrow .x { opacity: 0.5; }
 
-        .biz-stack { display: flex; flex-direction: column; gap: 28px; }
-
+        /* Stage that holds the deck of stacked cards */
+        .biz-stage {
+          position: relative;
+          flex: 1;
+          overflow: hidden;
+          border-radius: 12px;
+        }
         .biz-card {
-          position: sticky;
-          height: min(72vh, 620px);
+          position: absolute;
+          inset: 0;
+          will-change: transform;
+        }
+        .biz-inner {
+          height: 100%;
           background: #0d0d0d;
           border: 1px solid rgba(255,255,255,0.08);
           border-radius: 12px;
@@ -177,46 +218,49 @@ export function BuiltInZone() {
         }
 
         @media (max-width: 800px) {
-          .biz-card { grid-template-columns: 1fr; height: auto; min-height: 520px; }
-          .biz-media { min-height: 260px; }
+          .biz-inner { grid-template-columns: 1fr; }
+          .biz-media { min-height: 220px; }
         }
       `}</style>
 
       <section ref={sectionRef} id="work" className="biz-section">
-        <div className="biz-header">
-          <div className="biz-eyebrow">
-            BUILT. TESTED. MOVED.
-            <span className="x">✕</span>
-          </div>
-          <h2 className="biz-title" data-letter-fade>BUILT IN ZONE</h2>
-          <CornerArc />
-        </div>
-
-        <div className="biz-stack">
-          {cases.map((c, i) => (
-            <div
-              key={c.id}
-              ref={(el) => (cardRefs.current[i] = el)}
-              className="biz-card"
-              style={{ top: `${120 + i * 20}px`, zIndex: i + 1 }}
-            >
-              <div className="biz-body">
-                <div>
-                  <div className="biz-case">CASE {c.id}</div>
-                  <h3 className="biz-name">{c.name}</h3>
-                  <p className="biz-desc" data-line-reveal>{c.desc}</p>
-                </div>
-                <a href="#contact" className="biz-link">
-                  <span data-hover-stagger>EXPLORE CASE</span>
-                  <span>→</span>
-                </a>
-              </div>
-              <div className="biz-media">
-                <img data-parallax="6" src={c.img} alt={c.name} />
-              </div>
-              <span className="biz-cover" />
+        <div ref={pinTargetRef} className="biz-pin">
+          <div className="biz-header">
+            <div className="biz-eyebrow">
+              BUILT. TESTED. MOVED.
+              <span className="x">✕</span>
             </div>
-          ))}
+            <h2 className="biz-title" data-letter-fade>BUILT IN ZONE</h2>
+            <CornerArc />
+          </div>
+
+          <div className="biz-stage">
+            {cases.map((c, i) => (
+              <div
+                key={c.id}
+                ref={(el) => (cardRefs.current[i] = el)}
+                className="biz-card"
+              >
+                <div className="biz-inner">
+                  <div className="biz-body">
+                    <div>
+                      <div className="biz-case">CASE {c.id}</div>
+                      <h3 className="biz-name">{c.name}</h3>
+                      <p className="biz-desc">{c.desc}</p>
+                    </div>
+                    <a href="#contact" className="biz-link">
+                      <span data-hover-stagger>EXPLORE CASE</span>
+                      <span>→</span>
+                    </a>
+                  </div>
+                  <div className="biz-media">
+                    <img src={c.img} alt={c.name} />
+                  </div>
+                  <span className="biz-cover" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </>
