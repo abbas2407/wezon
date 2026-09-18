@@ -146,7 +146,7 @@ export function WhatWeBuild() {
       <section
         ref={sectionRef}
         id="build"
-        className="w-full bg-[#08080a] px-3 sm:px-4 lg:px-6 py-4 font-space-grotesk"
+        className="w-full bg-[#08080a] px-3 sm:px-4 lg:px-6 py-4"
       >
         <motion.div
           className="w-full bg-[#08080a] py-16 sm:py-24 lg:py-28 px-6 sm:px-10 lg:px-14"
@@ -208,7 +208,7 @@ export function WhatWeBuild() {
 
                   {/* Tags slide in on active */}
                   <p
-                    className={`font-space-grotesk text-sm text-white/50 tracking-wide whitespace-nowrap transition-all duration-500 ease-out overflow-hidden ${
+                    className={`text-sm text-white/50 tracking-wide whitespace-nowrap transition-all duration-500 ease-out overflow-hidden ${
                       i === activeIdx
                         ? 'max-w-[600px] opacity-100 translate-x-0'
                         : 'max-w-0 opacity-0 translate-x-6'
