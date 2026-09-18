@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { Preloader } from '@/components/sections/Preloader';
 import { Hero } from '@/components/sections/Hero';
+import { DataImpact } from '@/components/sections/DataImpact';
+import { WezonSystem } from '@/components/sections/WezonSystem';
 import { useSiteAnimations } from '@/hooks/useSiteAnimations';
 
 function App() {
@@ -41,6 +43,8 @@ function App() {
       >
         <main>
           <Hero />
+          <DataImpact />
+          <WezonSystem />
         </main>
       </div>
     </>
