@@ -1,268 +1,165 @@
-import React, { useLayoutEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
-gsap.registerPlugin(ScrollTrigger);
-
-const cases = [
-  {
-    id: '01',
-    name: 'LIVORA',
-    desc: 'Luxury furniture retail transformed into a high-end digital spatial experience with real-time room configuration and instant checkout.',
-    img: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: '02',
-    name: 'TAILORME',
-    desc: 'Bespoke tailoring redefined with digital precision, 3D body scanning, and an autonomous inventory + client portal system.',
-    img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1600&q=80',
-  },
-  {
-    id: '03',
-    name: 'SEARCH INTERIORS',
-    desc: 'A sophisticated marketplace bridging top-tier interior designers with clients, with immersive project catalogs and integrated messaging.',
-    img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80',
-  },
-];
-
-// Top-right decorative quarter-arcs
-const CornerArc = () => (
-  <svg
-    aria-hidden
-    width="220" height="220" viewBox="0 0 220 220"
-    style={{ position: 'absolute', top: 0, right: 0, opacity: 0.35, pointerEvents: 'none' }}
-  >
-    <path d="M 220 220 A 200 200 0 0 0 20 20"
-      fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1" />
-    <path d="M 220 220 A 150 150 0 0 0 70 70"
-      fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+const GlyphH = () => (
+  <svg className="w-[34px] h-[17px] text-[#C4C4C8] opacity-80" fill="currentColor" viewBox="0 0 38 19">
+    <rect x="0" y="0" width="6" height="5" />
+    <rect x="0" y="14" width="6" height="5" />
+    <rect x="6" y="7" width="6" height="5" />
+    <rect x="12" y="1" width="14" height="5" />
+    <rect x="12" y="13" width="14" height="5" />
+    <rect x="26" y="7" width="6" height="5" />
+    <rect x="32" y="0" width="6" height="5" />
+    <rect x="32" y="14" width="6" height="5" />
   </svg>
 );
 
-export function BuiltInZone() {
-  const sectionRef  = useRef<HTMLElement>(null);
-  const pinTargetRef = useRef<HTMLDivElement>(null);
-  const cardRefs    = useRef<(HTMLDivElement | null)[]>([]);
+const cases = [
+  {
+    num: '01',
+    title: 'LIVORA',
+    desc: 'A premium real estate platform with immersive property showcases and intelligent search.',
+    cta: 'EXPLORE CASE',
+    img: null,
+  },
+  {
+    num: '02',
+    title: 'NEXUS ERP',
+    desc: 'End-to-end business management system automating operations across departments.',
+    cta: 'EXPLORE CASE',
+    img: null,
+  },
+  {
+    num: '03',
+    title: 'SEARCH INTERIORS',
+    desc: 'A sophisticated marketplace bridging top-tier interior designers with clients.',
+    cta: 'EXPLORE CASE',
+    img: null,
+  },
+];
 
-  useLayoutEffect(() => {
-    if (!sectionRef.current || !pinTargetRef.current) return;
+function CaseCard({
+  item,
+  index,
+  total,
+}: {
+  item: typeof cases[0];
+  index: number;
+  total: number;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
 
-    const cardsEls = cardRefs.current.filter(Boolean) as HTMLDivElement[];
-    if (!cardsEls.length) return;
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ['start end', 'start start'],
+  });
 
-    // Initial state: card 0 visible; the rest sit below the viewport
-    // with a slight resting y-offset so they peek like a wallet stack when the
-    // section first appears.
-    cardsEls.forEach((el, i) => {
-      const restingPeek = i * 10; // px below when at rest under the top card
-      gsap.set(el, {
-        yPercent: i === 0 ? 0 : 100,
-        y: i === 0 ? 0 : restingPeek,
-        zIndex: i + 1,
-      });
-      const cover = el.querySelector<HTMLElement>('.biz-cover');
-      if (cover) gsap.set(cover, { opacity: 0 });
-      const inner = el.querySelector<HTMLElement>('.biz-inner');
-      if (inner) gsap.set(inner, { scale: 1 });
-    });
-
-    // Master timeline: for each incoming card, animate yPercent 100→0.
-    // While it comes in, the card underneath scales down + darkens.
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: '+=200%',
-        pin: pinTargetRef.current,
-        pinSpacing: true,
-        scrub: 0.6,
-        anticipatePin: 1,
-      },
-    });
-
-    for (let i = 1; i < cardsEls.length; i++) {
-      const incoming = cardsEls[i];
-      const under    = cardsEls[i - 1];
-      const cover    = under.querySelector<HTMLElement>('.biz-cover');
-      const innerU   = under.querySelector<HTMLElement>('.biz-inner');
-
-      const label = `card${i}`;
-      tl.addLabel(label);
-      tl.to(incoming, { yPercent: 0, y: 0, ease: 'none', duration: 0.85 }, label);
-      if (innerU) tl.to(innerU, { scale: 0.96, ease: 'none', duration: 0.85 }, label);
-      if (cover)  tl.to(cover,  { opacity: 0.55, ease: 'none', duration: 0.85 }, label);
-    }
-
-    const refresh = window.setTimeout(() => ScrollTrigger.refresh(), 250);
-    return () => {
-      window.clearTimeout(refresh);
-      tl.scrollTrigger?.kill();
-      tl.kill();
-    };
-  }, []);
+  const scale = useTransform(scrollYProgress, [0, 1], [0.92, 1]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [0.6, 1]);
 
   return (
-    <>
-      <style>{`
-        .biz-section {
-          position: relative;
-          background: #000;
-          color: #fff;
-          overflow: visible;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-        .biz-pin {
-          position: relative;
-          width: 100%;
-          height: 100vh;
-          padding: clamp(60px, 8vw, 100px) clamp(24px, 4vw, 56px);
-          box-sizing: border-box;
-          display: flex; flex-direction: column;
-        }
-
-        .biz-header { position: relative; margin-bottom: clamp(24px, 4vw, 48px); max-width: 720px; }
-        .biz-title {
-          font-family: 'Syne', 'Space Grotesk', sans-serif;
-          font-weight: 800;
-          font-size: clamp(42px, 4.8vw, 72px);
-          line-height: 1;
-          letter-spacing: -0.02em;
-          text-transform: uppercase;
-          color: #fff;
-          margin: 0 0 14px;
-        }
-        .biz-eyebrow {
-          display: flex; align-items: center; gap: 14px;
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: 12px;
-          letter-spacing: 0.25em;
-          color: rgba(255,255,255,0.5);
-          padding-bottom: 10px;
-          border-bottom: 1px solid rgba(255,255,255,0.15);
-          max-width: 320px;
-        }
-        .biz-eyebrow .x { opacity: 0.5; }
-
-        /* Stage that holds the deck of stacked cards */
-        .biz-stage {
-          position: relative;
-          flex: 1;
-          overflow: hidden;
-          border-radius: 12px;
-        }
-        .biz-card {
-          position: absolute;
-          inset: 0;
-          will-change: transform;
-        }
-        .biz-inner {
-          height: 100%;
-          background: #0d0d0d;
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 12px;
-          overflow: hidden;
-          display: grid;
-          grid-template-columns: 1fr 1.15fr;
-          transform-origin: center top;
-          will-change: transform;
-        }
-
-        .biz-body {
-          padding: clamp(28px, 4vw, 56px);
-          display: flex; flex-direction: column; justify-content: space-between; gap: 20px;
-        }
-        .biz-case {
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: 11px;
-          letter-spacing: 0.25em;
-          color: #7CFF9C;
-        }
-        .biz-name {
-          font-family: 'Syne', 'Space Grotesk', sans-serif;
-          font-weight: 800;
-          font-size: clamp(32px, 3.8vw, 56px);
-          line-height: 1.02;
-          letter-spacing: -0.02em;
-          text-transform: uppercase;
-          color: #fff;
-          margin: 12px 0 20px;
-        }
-        .biz-desc {
-          margin: 0;
-          color: rgba(255,255,255,0.65);
-          font-size: 14px;
-          line-height: 1.6;
-          font-family: 'Space Grotesk', sans-serif;
-          max-width: 380px;
-        }
-        .biz-link {
-          font-family: 'JetBrains Mono', ui-monospace, monospace;
-          font-size: 12px;
-          letter-spacing: 0.2em;
-          color: #fff;
-          text-decoration: none;
-          display: inline-flex; align-items: center; gap: 10px;
-          text-transform: uppercase;
-        }
-        .biz-media { position: relative; background: #111; overflow: hidden; }
-        .biz-media img {
-          width: 100%; height: 100%; object-fit: cover;
-          filter: brightness(0.9);
-        }
-        .biz-cover {
-          position: absolute; inset: 0;
-          background: #000;
-          opacity: 0;
-          pointer-events: none;
-          border-radius: 12px;
-        }
-
-        @media (max-width: 800px) {
-          .biz-inner { grid-template-columns: 1fr; }
-          .biz-media { min-height: 220px; }
-        }
-      `}</style>
-
-      <section ref={sectionRef} id="work" className="biz-section">
-        <div ref={pinTargetRef} className="biz-pin">
-          <div className="biz-header">
-            <div className="biz-eyebrow">
-              BUILT. TESTED. MOVED.
-              <span className="x">✕</span>
-            </div>
-            <h2 className="biz-title" data-letter-fade>BUILT IN ZONE</h2>
-            <CornerArc />
+    <div
+      ref={cardRef}
+      className="sticky"
+      style={{ top: `${80 + index * 30}px`, zIndex: index + 1 }}
+    >
+      <motion.div
+        className="w-full bg-[#141418] border border-white/[0.08] rounded-lg overflow-hidden grid grid-cols-1 lg:grid-cols-2 min-h-[380px] sm:min-h-[420px]"
+        style={{ scale, opacity }}
+      >
+        {/* Left: Metadata */}
+        <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-between">
+          <div>
+            <span className="inline-block font-orbitron font-medium text-[11px] tracking-[0.2em] text-[#c8ff00] uppercase mb-3">
+              Case {item.num}
+            </span>
+            <h3 className="font-orbitron font-medium text-xl sm:text-2xl lg:text-3xl tracking-tight text-white uppercase leading-tight">
+              {item.title}
+            </h3>
           </div>
 
-          <div className="biz-stage">
-            {cases.map((c, i) => (
-              <div
-                key={c.id}
-                ref={(el) => (cardRefs.current[i] = el)}
-                className="biz-card"
-              >
-                <div className="biz-inner">
-                  <div className="biz-body">
-                    <div>
-                      <div className="biz-case">CASE {c.id}</div>
-                      <h3 className="biz-name">{c.name}</h3>
-                      <p className="biz-desc">{c.desc}</p>
-                    </div>
-                    <a href="#contact" className="biz-link">
-                      <span data-hover-stagger>EXPLORE CASE</span>
-                      <span>→</span>
-                    </a>
-                  </div>
-                  <div className="biz-media">
-                    <img src={c.img} alt={c.name} />
-                  </div>
-                  <span className="biz-cover" />
-                </div>
-              </div>
-            ))}
+          <div className="mt-8">
+            <p className="text-[13px] sm:text-sm leading-relaxed text-white/60 max-w-[340px] mb-6">
+              {item.desc}
+            </p>
+            <a
+              href="#"
+              className="inline-flex items-center gap-2 font-orbitron font-medium text-[12px] tracking-[0.15em] text-white uppercase hover:text-[#c8ff00] transition-colors"
+            >
+              {item.cta}
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-px">
+                <path d="M1 7h11M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
           </div>
         </div>
-      </section>
-    </>
+
+        {/* Right: Mockup placeholder */}
+        <div className="relative bg-[#1a1a1f] flex items-center justify-center overflow-hidden min-h-[260px] lg:min-h-0">
+          {item.img ? (
+            <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-[80%] max-w-[400px] aspect-[16/10] rounded-md bg-[#222228] border border-white/[0.06] flex items-center justify-center">
+              <div className="flex flex-col items-center gap-3 opacity-30">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                  <rect x="4" y="8" width="40" height="28" rx="2" stroke="white" strokeWidth="1.5" />
+                  <path d="M4 36h40" stroke="white" strokeWidth="1.5" />
+                  <rect x="18" y="36" width="12" height="4" rx="1" stroke="white" strokeWidth="1" />
+                </svg>
+                <span className="font-orbitron text-[10px] tracking-[0.2em] text-white uppercase">
+                  Mockup {item.num}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+export function BuiltInZone() {
+  return (
+    <section className="w-full bg-[#08080a] px-3 sm:px-4 lg:px-6 pt-4 pb-0">
+      {/* Header */}
+      <div className="w-full bg-[#08080a] pt-16 sm:pt-20 pb-10 px-6 sm:px-10 lg:px-14 relative overflow-hidden">
+        {/* Quarter circle arc — top right */}
+        <svg
+          className="absolute top-0 right-0 w-[200px] h-[200px] sm:w-[280px] sm:h-[280px] pointer-events-none opacity-40"
+          fill="none"
+          viewBox="0 0 280 280"
+        >
+          <circle cx="280" cy="0" r="200" stroke="white" strokeWidth="1.2" />
+        </svg>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <h2 className="font-orbitron font-medium text-3xl sm:text-4xl lg:text-5xl xl:text-[56px] tracking-tight text-white uppercase leading-none mb-3">
+            Built in zone
+          </h2>
+          <div className="flex items-center gap-6 mb-0">
+            <span className="font-orbitron font-normal text-[13px] sm:text-sm tracking-[0.15em] text-white/40 uppercase">
+              Built. Tested. Moved.
+            </span>
+            <GlyphH />
+          </div>
+          <div className="w-full h-px bg-white/[0.08] mt-4" />
+        </motion.div>
+      </div>
+
+      {/* Stacked cards container — extra height for scroll distance */}
+      <div
+        className="relative px-4 sm:px-8 lg:px-12 pb-[200px]"
+        style={{ minHeight: `${cases.length * 60 + 100}vh` }}
+      >
+        {cases.map((item, i) => (
+          <CaseCard key={item.num} item={item} index={i} total={cases.length} />
+        ))}
+      </div>
+    </section>
   );
 }

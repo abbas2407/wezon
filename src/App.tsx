@@ -4,6 +4,7 @@ import { Preloader } from '@/components/sections/Preloader';
 import { Hero } from '@/components/sections/Hero';
 import { DataImpact } from '@/components/sections/DataImpact';
 import { WhatWeBuild } from '@/components/sections/WhatWeBuild';
+import { BuiltInZone } from '@/components/sections/BuiltInZone';
 import { useSiteAnimations } from '@/hooks/useSiteAnimations';
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
           <Hero />
           <DataImpact />
           <WhatWeBuild />
+          <BuiltInZone />
         </main>
       </div>
     </>
