@@ -1,335 +1,226 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const FONT = "'Orbitron', sans-serif";
-const TEXT_COLOR = '#fbfbfb';
-
-const Checker = () => (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0">
-    <rect x="0" y="0" width="3" height="3" fill="rgba(255,255,255,0.4)" />
-    <rect x="4" y="0" width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="8" y="0" width="3" height="3" fill="rgba(255,255,255,0.4)" />
-    <rect x="0" y="4" width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="4" y="4" width="3" height="3" fill="rgba(255,255,255,0.4)" />
-    <rect x="8" y="4" width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="0" y="8" width="3" height="3" fill="rgba(255,255,255,0.4)" />
-    <rect x="4" y="8" width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="8" y="8" width="3" height="3" fill="rgba(255,255,255,0.4)" />
-    <rect x="12" y="0" width="2" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="12" y="4" width="2" height="3" fill="rgba(255,255,255,0.4)" />
-    <rect x="12" y="8" width="2" height="3" fill="rgba(255,255,255,0.12)" />
+/* ── Alien Crab Pixel Glyph (horizontal) ── */
+const GlyphH = ({ className = '' }: { className?: string }) => (
+  <svg className={`w-[34px] h-[17px] text-[#C4C4C8] opacity-80 ${className}`} fill="currentColor" viewBox="0 0 38 19">
+    <rect x="0" y="0" width="6" height="5" />
+    <rect x="0" y="14" width="6" height="5" />
+    <rect x="6" y="7" width="6" height="5" />
+    <rect x="12" y="1" width="14" height="5" />
+    <rect x="12" y="13" width="14" height="5" />
+    <rect x="26" y="7" width="6" height="5" />
+    <rect x="32" y="0" width="6" height="5" />
+    <rect x="32" y="14" width="6" height="5" />
   </svg>
 );
 
-const HR = () => <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.10)' }} />;
-
-const WaveMesh = () => (
-  <svg viewBox="0 0 240 160" fill="none" style={{ width: '100%', height: 'auto' }}>
-    {Array.from({ length: 16 }).map((_, i) => {
-      const y = 6 + i * 10;
-      const a = 12 + i * 2.2;
-      return (
-        <path key={i}
-          d={`M0 ${y} C60 ${y - a}, 120 ${y + a}, 180 ${y} S240 ${y - a * 0.6}, 240 ${y}`}
-          stroke="rgba(255,255,255,0.35)" strokeWidth="0.45" fill="none" />
-      );
-    })}
-  </svg>
-);
-
-const ArcDecoration = () => (
-  <svg viewBox="0 0 300 300" fill="none" style={{ width: '100%', height: '100%' }}>
-    <circle cx="300" cy="0" r="80" stroke="rgba(255,255,255,0.12)" strokeWidth="0.5" />
-    <circle cx="300" cy="0" r="130" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
-    <circle cx="300" cy="0" r="180" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
-    <circle cx="300" cy="0" r="230" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
-    {Array.from({ length: 16 }).map((_, i) => {
-      const a = (i * Math.PI) / 8;
-      return (
-        <line key={i} x1="300" y1="0"
-          x2={300 + Math.cos(a) * 250} y2={Math.sin(a) * 250}
-          stroke="rgba(255,255,255,0.03)" strokeWidth="0.4" />
-      );
-    })}
+/* ── Alien Crab Pixel Glyph (vertical) ── */
+const GlyphV = () => (
+  <svg className="w-[15px] h-[30px] text-[#C4C4C8] opacity-85" fill="currentColor" viewBox="0 0 19 38">
+    <rect x="0" y="0" width="5" height="6" />
+    <rect x="14" y="0" width="5" height="6" />
+    <rect x="7" y="6" width="5" height="6" />
+    <rect x="1" y="12" width="5" height="14" />
+    <rect x="13" y="12" width="5" height="14" />
+    <rect x="7" y="26" width="5" height="6" />
+    <rect x="0" y="32" width="5" height="6" />
+    <rect x="14" y="32" width="5" height="6" />
   </svg>
 );
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 36 },
+  hidden: { opacity: 0, y: 32 },
   visible: (i: number) => ({
     opacity: 1, y: 0,
-    transition: { duration: 0.65, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] },
   }),
 };
 
 const services = [
-  { num: '01', title: 'STRATEGY', desc: 'Business objectives, positioning, audience and digital roadmap.' },
-  { num: '02', title: 'BRAND', desc: 'Identity, visual systems and digital presence built for recognition.' },
-  { num: '03', title: 'PRODUCT', desc: 'Websites, applications, platforms and user experiences.' },
-  { num: '04', title: 'TECHNOLOGY', desc: 'Software, ERP, integrations and intelligent automation.' },
-  { num: '05', title: 'GROWTH', desc: 'Performance marketing, acquisition, optimization and scale.' },
+  { num: '01', title: 'Strategy', desc: 'Business objectives, positioning, audience and digital roadmap.' },
+  { num: '02', title: 'Brand', desc: 'Identity, visual systems and digital presence built for recognition.' },
+  { num: '03', title: 'Product', desc: 'Websites, applications, platforms and user experiences.' },
+  { num: '04', title: 'Technology', desc: 'Software, ERP, integrations and intelligent automation.' },
+  { num: '05', title: 'Growth', desc: 'Performance marketing, acquisition, optimization and scale.' },
 ];
-
-/* number style — 136.72px in Figma at 1440 */
-const numStyle: React.CSSProperties = {
-  fontFamily: FONT, fontWeight: 500, color: TEXT_COLOR,
-  fontSize: 'clamp(64px, 9.5vw, 137px)', lineHeight: '100%', letterSpacing: 0,
-  display: 'block',
-};
-
-/* label style — 38.48px in Figma */
-const labelStyle: React.CSSProperties = {
-  fontFamily: FONT, fontWeight: 500, color: TEXT_COLOR,
-  fontSize: 'clamp(22px, 2.7vw, 38px)', lineHeight: '100%', letterSpacing: 0,
-  display: 'block', marginTop: '8px',
-};
-
-/* body style — 18px in Figma */
-const bodyStyle: React.CSSProperties = {
-  fontFamily: FONT, fontWeight: 500, color: TEXT_COLOR,
-  fontSize: 'clamp(13px, 1.25vw, 18px)', lineHeight: '100%', letterSpacing: 0,
-  margin: 0,
-};
 
 export function DataImpact() {
   return (
-    <section style={{ background: '#000', fontFamily: FONT, padding: '24px clamp(16px, 3.1vw, 45px)' }}>
+    <section className="w-full bg-[#08080a] px-3 sm:px-6 lg:px-10 py-8 font-space-grotesk">
+      <div className="max-w-[1240px] mx-auto flex flex-col gap-8">
 
-      {/* ════════════ PANEL 1 ════════════ */}
-      <div style={{ borderRadius: '20px', border: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden' }}>
-
-        {/* top nav labels */}
-        <div style={{
-          display: 'flex', gap: '28px', padding: '18px 32px',
-          borderBottom: '1px solid rgba(255,255,255,0.08)', background: '#0a0a0a',
-        }}>
-          {['STRATEGY', 'TECHNOLOGY', 'GROWTH'].map((t) => (
-            <span key={t} style={{
-              fontFamily: FONT, fontSize: '11px', fontWeight: 500,
-              letterSpacing: '0.3em', color: '#666', textTransform: 'uppercase',
-            }}>{t}</span>
-          ))}
-        </div>
-
-        {/* 4-column grid: 471 / 293 / 293 / 293 at 1440px → 35% 21.7% 21.7% 21.7% */}
-        <div data-impact-grid style={{
-          display: 'grid',
-          gridTemplateColumns: '34.9% 21.7% 21.7% 21.7%',
-        }}>
-
-          {/* ── COL 1 ── */}
-          <motion.div style={{
-            background: '#0a0a0a', padding: 'clamp(28px, 3vw, 40px)',
-            borderRight: '1px solid rgba(255,255,255,0.08)',
-            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-            minHeight: 'clamp(400px, 44.6vw, 643px)', position: 'relative', overflow: 'hidden',
-          }}
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={0} variants={fadeUp}
+        {/* ════════════ PANEL 1: 4-Column Grid ════════════ */}
+        <motion.div
+          className="w-full bg-[#121215] border border-white/10 rounded-sm overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px] relative"
+          initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }}
+        >
+          {/* ── Col 1: Impact (4 cols) ── */}
+          <motion.article
+            className="lg:col-span-4 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10 relative z-10 overflow-hidden"
+            custom={0} variants={fadeUp}
           >
-            <div>
-              <h2 style={{
-                fontFamily: FONT, fontWeight: 500, color: TEXT_COLOR,
-                fontSize: 'clamp(24px, 3.2vw, 46px)', lineHeight: '100%',
-                letterSpacing: 0, textTransform: 'uppercase', margin: 0,
-              }}>
-                DATA THAT TURNS<br />INTO BUSINESS<br />IMPACT
+            {/* orbital arc bg */}
+            <svg className="absolute -right-28 bottom-12 w-[340px] h-[340px] pointer-events-none opacity-45 z-0" fill="none" viewBox="0 0 400 400">
+              <circle cx="200" cy="200" r="180" stroke="white" strokeWidth="1.2" opacity="0.65" strokeDasharray="2 0" />
+            </svg>
+
+            <div className="relative z-10">
+              <div className="flex items-center gap-6 text-[11px] tracking-[0.25em] font-orbitron font-medium text-white/50 mb-14 uppercase">
+                <span>Strategy</span>
+                <span>Technology</span>
+                <span>Growth</span>
+              </div>
+              <h2 className="font-orbitron font-medium text-2xl sm:text-3xl lg:text-[34px] leading-[1.25] tracking-wide text-white uppercase">
+                Data that turns<br />into business<br />impact
               </h2>
-              <div style={{ marginTop: '28px' }}><HR /></div>
             </div>
 
-            {/* faint circle */}
-            <div style={{
-              position: 'absolute', bottom: '-120px', right: '-80px',
-              width: '340px', height: '340px', borderRadius: '50%',
-              border: '1px solid rgba(255,255,255,0.06)', pointerEvents: 'none',
-            }} />
-
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                <div style={{ flex: 1 }}><HR /></div>
-                <Checker />
+            <div className="relative z-10 mt-16 lg:mt-0">
+              <div className="flex justify-end mb-3 pr-2">
+                <GlyphH />
               </div>
-              <p style={{ ...bodyStyle, maxWidth: '320px' }}>
-                We combine strategy, technology and performance to build digital systems that don't just look good — they move the business forward.
-              </p>
+              <div className="pt-4 border-t border-white/20">
+                <p className="text-[13.5px] leading-relaxed text-white/80 font-normal max-w-[320px]">
+                  We combine strategy, technology and performance to build digital systems that don't just look good — they move the business forward.
+                </p>
+              </div>
             </div>
-          </motion.div>
+          </motion.article>
 
-          {/* ── COL 2: 01 strategy — bg rgba(36,36,38,0.44) ── */}
-          <motion.div style={{
-            background: 'rgba(36, 36, 38, 0.44)',
-            padding: 'clamp(28px, 2.5vw, 36px)',
-            borderRight: '1px solid rgba(255,255,255,0.08)',
-            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-            minHeight: 'clamp(400px, 44.6vw, 643px)', position: 'relative', overflow: 'hidden',
-          }}
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={1} variants={fadeUp}
+          {/* ── Col 2: 01 Strategy (3 cols) ── */}
+          <motion.article
+            className="lg:col-span-3 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10 relative overflow-hidden"
+            custom={1} variants={fadeUp}
           >
-            <div>
-              <span style={numStyle}>01</span>
-              <span style={labelStyle}>strategy</span>
-            </div>
+            {/* wave lines bg */}
+            <svg className="absolute -bottom-6 -left-12 w-[340px] h-[220px] pointer-events-none opacity-30 text-white" fill="none" viewBox="0 0 300 200">
+              <path d="M-20 180 C 40 130, 120 190, 200 120 C 240 85, 280 130, 320 90" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M-20 170 C 45 125, 125 180, 205 115 C 245 80, 285 125, 325 85" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M-20 160 C 50 120, 130 170, 210 110 C 250 75, 290 120, 330 80" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M-20 150 C 55 115, 135 160, 215 105 C 255 70, 295 115, 335 75" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M-20 140 C 60 110, 140 150, 220 100 C 260 65, 300 110, 340 70" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M-20 130 C 65 105, 145 140, 225 95 C 265 60, 305 105, 345 65" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M-20 120 C 70 100, 150 130, 230 90 C 270 55, 310 100, 350 60" stroke="currentColor" strokeWidth="0.8" />
+            </svg>
 
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                <Checker />
-                <div style={{ flex: 1 }}><HR /></div>
-              </div>
-              <p style={bodyStyle}>
+            <div className="relative z-10">
+              <div className="font-orbitron font-medium text-7xl sm:text-8xl tracking-tight text-white leading-none">01</div>
+              <div className="font-orbitron font-medium text-2xl text-white lowercase mt-1 tracking-wider">strategy</div>
+              <div className="mt-4"><GlyphH /></div>
+              <p className="text-[13.5px] leading-relaxed text-white/80 font-normal mt-6 max-w-[210px]">
                 A clear direction before a single pixel, line of code or campaign is launched.
               </p>
             </div>
-          </motion.div>
+            <div className="relative z-10 mt-20" />
+          </motion.article>
 
-          {/* ── COL 3: 02 systems — bg rgba(73,74,78,0.42) ── */}
-          <motion.div style={{
-            background: 'rgba(73, 74, 78, 0.42)',
-            padding: 'clamp(28px, 2.5vw, 36px)',
-            borderRight: '1px solid rgba(255,255,255,0.08)',
-            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-            minHeight: 'clamp(400px, 44.6vw, 643px)', position: 'relative', overflow: 'hidden',
-          }}
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={2} variants={fadeUp}
+          {/* ── Col 3: 02 Systems (2 cols) ── */}
+          <motion.article
+            className="lg:col-span-2 bg-[#202126]/80 p-8 sm:p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10 relative"
+            custom={2} variants={fadeUp}
           >
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-                <Checker />
-                <div style={{ flex: 1 }}><HR /></div>
-              </div>
-              <div style={{ opacity: 0.12 }}><WaveMesh /></div>
+            <div className="w-full flex justify-center pt-2">
+              <GlyphH />
             </div>
 
-            <div>
-              <span style={numStyle}>02</span>
-              <span style={labelStyle}>systems</span>
-              <p style={{ ...bodyStyle, marginTop: '16px' }}>
+            <div className="mt-auto mb-4">
+              <div className="font-orbitron font-medium text-7xl tracking-tight text-white leading-none">02</div>
+              <div className="font-orbitron font-medium text-2xl text-white lowercase mt-1 tracking-wider">systems</div>
+              <div className="w-full border-t border-white/20 my-4" />
+              <p className="text-[12.5px] leading-relaxed text-white/80 font-normal">
                 Digital experiences designed to connect people, products, data and operations.
               </p>
             </div>
+          </motion.article>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Checker />
-            </div>
-          </motion.div>
-
-          {/* ── COL 4: 03 GROWTH — bg rgba(73,74,78,0) = transparent ── */}
-          <motion.div style={{
-            background: 'rgba(73, 74, 78, 0)',
-            padding: 'clamp(28px, 2.5vw, 36px)',
-            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-            minHeight: 'clamp(400px, 44.6vw, 643px)', position: 'relative', overflow: 'hidden',
-          }}
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={3} variants={fadeUp}
+          {/* ── Col 4: 03 Growth (3 cols) ── */}
+          <motion.article
+            className="lg:col-span-3 p-8 sm:p-8 flex flex-col justify-between relative overflow-hidden"
+            custom={3} variants={fadeUp}
           >
-            <div style={{
-              position: 'absolute', top: '-40px', right: '-40px',
-              width: '300px', height: '300px', pointerEvents: 'none',
-            }}>
-              <ArcDecoration />
-            </div>
+            {/* wave lines top-right */}
+            <svg className="absolute top-0 right-0 w-[240px] h-[130px] pointer-events-none opacity-30 text-white" fill="none" viewBox="0 0 240 130">
+              <path d="M0 40 C 60 10, 120 70, 240 20" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M0 50 C 60 20, 120 80, 240 30" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M0 60 C 60 30, 120 90, 240 40" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M0 70 C 60 40, 120 100, 240 50" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M0 80 C 60 50, 120 110, 240 60" stroke="currentColor" strokeWidth="0.8" />
+              <path d="M0 90 C 60 60, 120 120, 240 70" stroke="currentColor" strokeWidth="0.8" />
+            </svg>
 
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              <span style={numStyle}>03</span>
-              <span style={{ ...labelStyle, textTransform: 'uppercase' }}>GROWTH</span>
-              <p style={{ ...bodyStyle, marginTop: '16px' }}>
+            <div />
+
+            <div className="relative z-10 mt-auto">
+              <div className="font-orbitron font-medium text-7xl sm:text-8xl tracking-tight text-white leading-none">03</div>
+              <div className="font-orbitron font-medium text-xl sm:text-2xl text-white uppercase mt-1 tracking-wider">GROWTH</div>
+              <p className="text-[13px] leading-relaxed text-white/80 font-normal mt-3 max-w-[210px]">
                 Performance that creates momentum.
               </p>
+              <div className="relative mt-8 flex items-center">
+                <GlyphH className="mr-2 flex-shrink-0" />
+                <div className="flex-grow border-t border-white/20" />
+              </div>
             </div>
+          </motion.article>
+        </motion.div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative', zIndex: 1 }}>
-              <div style={{ flex: 1 }}><HR /></div>
-              <Checker />
-            </div>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* ════════════ PANEL 2 ════════════ */}
-      <div data-impact-panel2 style={{
-        borderRadius: '20px', border: '1px solid rgba(255,255,255,0.08)',
-        overflow: 'hidden', marginTop: '4px', background: '#0a0a0a',
-        display: 'grid', gridTemplateColumns: '38% 62%',
-      }}>
-        {/* ── Left col ── */}
-        <motion.div style={{
-          padding: 'clamp(32px, 3vw, 44px)',
-          borderRight: '1px solid rgba(255,255,255,0.08)',
-          display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-          minHeight: 'clamp(380px, 30vw, 440px)', position: 'relative', overflow: 'hidden',
-        }}
-          initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={0} variants={fadeUp}
+        {/* ════════════ PANEL 2: WE.ZON System ════════════ */}
+        <motion.div
+          className="w-full bg-[#121215] border border-white/10 rounded-sm p-8 sm:p-12 lg:p-14 relative overflow-hidden"
+          initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }}
         >
-          <div style={{
-            position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)',
-            width: 'min(85%, 360px)', aspectRatio: '1', borderRadius: '50%',
-            border: '1px solid rgba(255,255,255,0.06)', pointerEvents: 'none',
-          }} />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-stretch">
+            {/* ── Left: System Statement (6 cols) ── */}
+            <motion.div className="lg:col-span-6 flex flex-col justify-between relative" custom={0} variants={fadeUp}>
+              <svg className="absolute top-[-40px] right-[-20px] w-[320px] h-[320px] pointer-events-none opacity-40 z-0" fill="none" viewBox="0 0 320 320">
+                <circle cx="160" cy="160" r="140" stroke="white" strokeWidth="1.2" opacity="0.6" />
+              </svg>
 
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <span style={{
-              fontFamily: FONT, fontSize: '10px', fontWeight: 500,
-              letterSpacing: '0.3em', color: '#666', textTransform: 'uppercase',
-              display: 'block', marginBottom: '28px',
-            }}>THE WE.ZON SYSTEM</span>
+              <div className="relative z-10">
+                <div className="font-orbitron text-[11px] tracking-[0.25em] text-white/50 uppercase mb-4">
+                  The WE.ZON System
+                </div>
+                <h2 className="font-orbitron font-medium text-3xl sm:text-4xl lg:text-[42px] leading-[1.18] tracking-tight text-white uppercase">
+                  One system.<br />Every digital<br />touchpoint.
+                </h2>
+              </div>
 
-            <h2 style={{
-              fontFamily: FONT, fontWeight: 500, color: TEXT_COLOR,
-              fontSize: 'clamp(24px, 2.8vw, 36px)', lineHeight: '100%',
-              letterSpacing: 0, textTransform: 'uppercase', margin: 0,
-            }}>
-              ONE SYSTEM.<br />EVERY DIGITAL<br />TOUCHPOINT.
-            </h2>
-          </div>
+              <div className="relative z-10 mt-16 lg:mt-0">
+                <p className="text-[13.5px] leading-relaxed text-white/80 font-normal max-w-[340px] mb-4">
+                  WE.ZON brings strategy, design, technology and growth under one connected system.
+                </p>
+                <div className="flex items-center">
+                  <div className="flex-grow border-t border-white/20" />
+                  <GlyphH className="ml-3 flex-shrink-0" />
+                </div>
+              </div>
+            </motion.div>
 
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-              <div style={{ flex: 1 }}><HR /></div>
-              <Checker />
+            {/* ── Right: 5 Framework Items (6 cols) ── */}
+            <div className="lg:col-span-6 flex flex-col justify-center space-y-6">
+              {services.map((s, i) => (
+                <motion.div
+                  key={s.num}
+                  className={`${i < services.length - 1 ? 'pb-5' : 'pb-2'} border-b border-white/15 flex items-start gap-4 sm:gap-5`}
+                  custom={i} variants={fadeUp}
+                >
+                  <div className="pt-0.5 flex-shrink-0"><GlyphV /></div>
+                  <div>
+                    <h3 className="font-orbitron font-medium text-[15px] sm:text-[17px] tracking-wider text-white uppercase">
+                      {s.num} — {s.title}
+                    </h3>
+                    <p className="text-[12.5px] text-white/60 font-normal mt-0.5 tracking-normal">
+                      {s.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
-            <p style={{ ...bodyStyle, maxWidth: '320px' }}>
-              WE.ZON brings strategy, design, technology and growth under one connected system.
-            </p>
           </div>
         </motion.div>
 
-        {/* ── Right col: service list ── */}
-        <div>
-          {services.map((s, i) => (
-            <motion.div key={s.num} style={{
-              display: 'flex', alignItems: 'flex-start', gap: '16px',
-              padding: 'clamp(20px, 2vw, 28px) clamp(24px, 2.5vw, 36px)',
-              borderBottom: i < services.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none',
-            }}
-              initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} custom={i} variants={fadeUp}
-            >
-              <div style={{ paddingTop: '2px' }}><Checker /></div>
-              <div>
-                <span style={{
-                  fontFamily: FONT, fontSize: 'clamp(13px, 1.2vw, 16px)', fontWeight: 500,
-                  color: TEXT_COLOR, letterSpacing: 0, textTransform: 'uppercase', display: 'block',
-                  lineHeight: '100%',
-                }}>
-                  {s.num} — {s.title}
-                </span>
-                <p style={{
-                  fontFamily: FONT, fontSize: 'clamp(11px, 1vw, 14px)', fontWeight: 500,
-                  color: 'rgba(251,251,251,0.5)', lineHeight: '140%',
-                  letterSpacing: 0, margin: 0, marginTop: '8px',
-                }}>
-                  {s.desc}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
       </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          [data-impact-grid] { grid-template-columns: 1fr !important; }
-          [data-impact-panel2] { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </section>
   );
 }
