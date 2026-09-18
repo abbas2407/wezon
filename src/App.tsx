@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import Lenis from 'lenis';
+import { useSiteAnimations } from '@/hooks/useSiteAnimations';
+import { Footer } from '@/components/layout/Footer';
 import { Preloader } from '@/components/sections/Preloader';
 import { Hero } from '@/components/sections/Hero';
-import { DataImpact } from '@/components/sections/DataImpact';
+import { StrategySystemsGrowth } from '@/components/sections/StrategySystemsGrowth';
 import { WezonSystem } from '@/components/sections/WezonSystem';
-import { useSiteAnimations } from '@/hooks/useSiteAnimations';
+import { WhatWeBuild } from '@/components/sections/WhatWeBuild';
+import { BuiltInZone } from '@/components/sections/BuiltInZone';
+import { MetricsGrid } from '@/components/sections/MetricsGrid';
+import { ClientSignals } from '@/components/sections/ClientSignals';
+import { AboutStatement } from '@/components/sections/AboutStatement';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -42,10 +48,33 @@ function App() {
         }}
       >
         <main>
+          {/* Section 1: Hero */}
           <Hero />
-          <DataImpact />
+
+          {/* Section 2: Strategy & Impact Grid */}
+          <StrategySystemsGrowth />
+
+          {/* Section 3: Architecture Overview */}
           <WezonSystem />
+
+          {/* Section 4: What We Build */}
+          <WhatWeBuild />
+
+          {/* Section 5: Built in Zone Showcase */}
+          <BuiltInZone />
+
+          {/* Section 6: Performance Metrics Grid */}
+          <MetricsGrid />
+
+          {/* Section 7: Client Signals */}
+          <ClientSignals />
+
+          {/* Section 8: About Statement */}
+          <AboutStatement />
         </main>
+
+        {/* Section 9: Footer & CTA */}
+        <Footer />
       </div>
     </>
   );

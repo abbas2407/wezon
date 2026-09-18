@@ -1,165 +1,136 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const CornerMark = () => (
-  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: '4px' }}>
-    <rect x="0" y="0" width="4" height="4" rx="0.5" fill="rgba(255,255,255,0.3)" />
-    <rect x="6" y="0" width="4" height="4" rx="0.5" fill="rgba(255,255,255,0.3)" />
-    <rect x="0" y="6" width="4" height="4" rx="0.5" fill="rgba(255,255,255,0.3)" />
-    <rect x="6" y="6" width="4" height="4" rx="0.5" fill="rgba(255,255,255,0.3)" />
-  </svg>
-);
-
-const services = [
+const systemTouchpoints = [
   {
-    num: '01',
+    id: '01',
     title: 'STRATEGY',
-    desc: 'Business objectives, positioning, audience and digital roadmap.',
+    desc: 'Business objectives, positioning, audience intelligence and unified digital roadmap.',
   },
   {
-    num: '02',
-    title: 'BRAND',
-    desc: 'Identity, visual systems and digital presence built for recognition.',
+    id: '02',
+    title: 'DESIGN',
+    desc: 'Visual identity, design systems, and digital interfaces crafted for unmistakable recognition.',
   },
   {
-    num: '03',
-    title: 'PRODUCT',
-    desc: 'Websites, applications, platforms and user experiences.',
+    id: '03',
+    title: 'BUILD',
+    desc: 'Websites, high-performance web applications, platforms, and spatial digital touchpoints.',
   },
   {
-    num: '04',
-    title: 'TECHNOLOGY',
-    desc: 'Software, ERP, integrations and intelligent automation.',
+    id: '04',
+    title: 'INFRASTRUCTURE',
+    desc: 'Cloud architectures, headless backends, ERP/CRM integrations, and intelligent automation.',
   },
   {
-    num: '05',
+    id: '05',
     title: 'GROWTH',
-    desc: 'Performance marketing, acquisition, optimization and scale.',
+    desc: 'Performance marketing engines, acquisition funnels, conversion optimization, and compounding scale.',
   },
 ];
 
 export function WezonSystem() {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
   return (
     <section
+      id="system"
+      className="relative bg-black text-white overflow-hidden"
       style={{
-        background: '#000',
-        padding: 'clamp(80px, 10vw, 120px) clamp(24px, 4vw, 56px)',
-        fontFamily: "'Orbitron', 'Space Grotesk', sans-serif",
-        position: 'relative',
-        overflow: 'hidden',
+        padding: 'clamp(60px, 8vw, 120px) clamp(24px, 4vw, 56px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
       }}
     >
-      {/* Decorative large circle */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '-8%',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: 'min(55vw, 600px)',
-          height: 'min(55vw, 600px)',
-          borderRadius: '50%',
-          border: '1px solid rgba(255,255,255,0.06)',
-          pointerEvents: 'none',
-        }}
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        
+        {/* ── LEFT COLUMN ── */}
+        <div className="lg:col-span-5 relative flex flex-col justify-between min-h-[380px]">
+          {/* Subtle Concentric Arc Vector Background */}
+          <div className="absolute top-12 -left-20 w-80 h-80 rounded-full border border-white/10 pointer-events-none" />
+          <div className="absolute top-4 -left-28 w-96 h-96 rounded-full border border-white/5 pointer-events-none" />
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 'clamp(40px, 6vw, 80px)',
-          alignItems: 'start',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
-        {/* ── Left column ── */}
-        <div>
-          <span
-            style={{
-              fontFamily: "'Orbitron', sans-serif",
-              fontSize: '10px',
-              fontWeight: 600,
-              letterSpacing: '0.16em',
-              textTransform: 'uppercase' as const,
-              color: 'rgba(255,255,255,0.35)',
-              display: 'block',
-              marginBottom: '32px',
-            }}
-          >
-            THE WE.ZON SYSTEM
-          </span>
-
-          <h2
-            style={{
-              fontFamily: "'Orbitron', sans-serif",
-              fontWeight: 800,
-              fontSize: 'clamp(32px, 4vw, 56px)',
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-              textTransform: 'uppercase' as const,
-              color: '#fff',
-              marginBottom: '32px',
-            }}
-          >
-            ONE SYSTEM.
-            <br />
-            EVERY DIGITAL
-            <br />
-            TOUCHPOINT.
-          </h2>
-
-          <p
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 'clamp(13px, 1.1vw, 16px)',
-              lineHeight: 1.7,
-              color: 'rgba(255,255,255,0.4)',
-              fontWeight: 400,
-              maxWidth: '380px',
-            }}
-          >
-            WE.ZON brings strategy, design,
-            technology and growth under one
-            connected system.
-          </p>
-        </div>
-
-        {/* ── Right column: service list ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '36px' }}>
-          {services.map((s) => (
-            <div key={s.num} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-              <CornerMark />
-              <div>
-                <span
-                  style={{
-                    fontFamily: "'Orbitron', sans-serif",
-                    fontSize: 'clamp(14px, 1.3vw, 18px)',
-                    fontWeight: 700,
-                    color: '#fff',
-                    letterSpacing: '0.04em',
-                    display: 'block',
-                    marginBottom: '6px',
-                  }}
-                >
-                  {s.num} — {s.title}
-                </span>
-                <p
-                  style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontSize: 'clamp(12px, 1vw, 14px)',
-                    lineHeight: 1.6,
-                    color: 'rgba(255,255,255,0.35)',
-                    fontWeight: 400,
-                    margin: 0,
-                  }}
-                >
-                  {s.desc}
-                </p>
-              </div>
+          <div>
+            <div className="text-[12px] tracking-[0.25em] text-white/50 mb-6 font-mono">
+              THE WE✦ZON SYSTEM
             </div>
-          ))}
+            <h2
+              data-letter-fade
+              className="text-white font-bold leading-[1.02] tracking-tight uppercase"
+              style={{
+                fontFamily: 'Orbitron, Space Grotesk, sans-serif',
+                fontSize: 'clamp(32px, 3.8vw, 54px)',
+              }}
+            >
+              ONE SYSTEM. EVERY DIGITAL TOUCHPOINT.
+            </h2>
+          </div>
+
+          <div className="mt-12 z-10">
+            <p data-line-reveal className="text-white/60 text-[15px] leading-relaxed font-sans max-w-[340px]">
+              WE✦ZON brings strategy, design, technology, and growth under one cohesive, connected architecture.
+            </p>
+            <div className="mt-6 flex items-center gap-2 text-white/30 font-mono text-xs">
+              <span>✦</span>
+              <span>UNIFIED ARCHITECTURE</span>
+            </div>
+          </div>
         </div>
+
+        {/* ── RIGHT COLUMN: INTERACTIVE ACCORDION LIST ── */}
+        <div className="lg:col-span-7 flex flex-col border-t border-white/10">
+          {systemTouchpoints.map((item, idx) => {
+            const isHovered = hoveredIdx === idx;
+            return (
+              <div
+                key={item.id}
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
+                className="group relative py-7 border-b border-white/10 transition-all duration-300 cursor-pointer"
+                style={{
+                  background: isHovered ? 'linear-gradient(90deg, rgba(255,255,255,0.03), transparent)' : 'transparent',
+                  paddingLeft: isHovered ? '12px' : '0px',
+                }}
+              >
+                <div className="flex items-start gap-6">
+                  {/* High-tech indicator glyph */}
+                  <div
+                    className="w-7 h-7 mt-1 rounded-sm border flex items-center justify-center transition-colors duration-300 shrink-0"
+                    style={{
+                      borderColor: isHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.25)',
+                      backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                      color: isHovered ? '#ffffff' : 'rgba(255, 255, 255, 0.7)',
+                    }}
+                  >
+                    <span className="text-[11px] font-mono">{isHovered ? '✦' : '→'}</span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <div
+                        className="text-white font-bold uppercase transition-colors duration-200"
+                        style={{
+                          fontFamily: 'Orbitron, Space Grotesk, sans-serif',
+                          fontSize: 'clamp(18px, 1.8vw, 24px)',
+                          letterSpacing: '0.02em',
+                        }}
+                      >
+                        {item.id} — {item.title}
+                      </div>
+                      <span className="text-white/30 font-mono text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                        [EXPLORE]
+                      </span>
+                    </div>
+
+                    <p className="mt-2 text-white/55 text-[14px] leading-relaxed font-sans max-w-[560px]">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
       </div>
     </section>
   );
