@@ -26,6 +26,8 @@ export default {
         syne: ['Syne', 'sans-serif'],
         sora: ['Syne', 'sans-serif'],
         inter: ['Syne', 'sans-serif'],
+        orbitron: ['Orbitron', 'sans-serif'],
+        'space-grotesk': ['Space Grotesk', 'sans-serif'],
       },
     },
   },
