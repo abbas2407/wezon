@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useState } from 'react';
+import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 
 const GlyphH = () => (
   <svg className="w-[34px] h-[17px] text-[#C4C4C8] opacity-80" fill="currentColor" viewBox="0 0 38 19">
@@ -31,9 +31,25 @@ const fadeUp = {
 
 export function WhatWeBuild() {
   const [activeIdx, setActiveIdx] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+
+  useMotionValueEvent(scrollYProgress, 'change', (v) => {
+    const mapped = Math.max(0, Math.min(1, (v - 0.2) / 0.5));
+    const idx = Math.min(
+      buildItems.length - 1,
+      Math.floor(mapped * buildItems.length * 0.999),
+    );
+    setActiveIdx(idx);
+  });
 
   return (
     <section
+      ref={sectionRef}
       id="build"
       className="w-full bg-[#08080a] px-3 sm:px-4 lg:px-6 py-4 font-space-grotesk"
     >
@@ -70,7 +86,7 @@ export function WhatWeBuild() {
               key={item.title}
               custom={i + 3}
               variants={fadeUp}
-              className={`relative cursor-pointer border-b border-white/[0.06] transition-opacity duration-500 ease-out ${
+              className={`relative cursor-pointer border-b border-white/[0.06] transition-all duration-500 ease-out ${
                 i === activeIdx ? 'opacity-100' : 'opacity-30'
               }`}
               onMouseEnter={() => setActiveIdx(i)}
@@ -92,7 +108,6 @@ export function WhatWeBuild() {
                   {item.title}
                 </h3>
 
-                {/* Tags — slide in when active */}
                 <p
                   className={`font-space-grotesk text-sm text-white/50 tracking-wide whitespace-nowrap transition-all duration-500 ease-out overflow-hidden ${
                     i === activeIdx
@@ -108,11 +123,7 @@ export function WhatWeBuild() {
         </div>
 
         {/* Progress indicator */}
-        <motion.div
-          className="mt-10 flex items-center gap-3"
-          custom={7}
-          variants={fadeUp}
-        >
+        <motion.div className="mt-10 flex items-center gap-3" custom={7} variants={fadeUp}>
           <span className="font-orbitron text-[11px] tracking-[0.15em] text-white/40">
             {String(activeIdx + 1).padStart(2, '0')} / {String(buildItems.length).padStart(2, '0')}
           </span>
