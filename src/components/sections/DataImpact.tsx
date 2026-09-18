@@ -47,7 +47,7 @@ const services = [
 
 export function DataImpact() {
   return (
-    <section className="w-full bg-[#08080a] px-3 sm:px-4 lg:px-6 py-4 font-space-grotesk">
+    <section className="w-full bg-[#08080a] px-3 sm:px-4 lg:px-6 py-4">
       <div className="w-full mx-auto flex flex-col gap-4">
 
         {/* ════════════ PANEL 1: 4-Column Grid ════════════ */}
