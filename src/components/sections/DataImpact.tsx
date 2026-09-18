@@ -1,333 +1,260 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
-const CornerMark = ({ className = '' }: { className?: string }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
-    <rect x="0" y="0" width="4" height="4" rx="0.5" fill="rgba(255,255,255,0.25)" />
-    <rect x="6" y="0" width="4" height="4" rx="0.5" fill="rgba(255,255,255,0.25)" />
-    <rect x="0" y="6" width="4" height="4" rx="0.5" fill="rgba(255,255,255,0.25)" />
-    <rect x="6" y="6" width="4" height="4" rx="0.5" fill="rgba(255,255,255,0.25)" />
+/* ── tiny reusable pieces ─────────────────────────────── */
+
+const Checker = ({ className = '' }: { className?: string }) => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={`shrink-0 ${className}`}>
+    <rect x="0"  y="0"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
+    <rect x="4"  y="0"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
+    <rect x="0"  y="4"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
+    <rect x="4"  y="4"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
+    <rect x="8"  y="0"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
+    <rect x="12" y="0"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
+    <rect x="8"  y="4"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
+    <rect x="12" y="4"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
+    <rect x="0"  y="8"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
+    <rect x="4"  y="8"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
+    <rect x="8"  y="8"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
+    <rect x="12" y="8"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
+    <rect x="0"  y="12" width="3" height="3" fill="rgba(255,255,255,0.12)" />
+    <rect x="4"  y="12" width="3" height="3" fill="rgba(255,255,255,0.35)" />
+    <rect x="8"  y="12" width="3" height="3" fill="rgba(255,255,255,0.12)" />
+    <rect x="12" y="12" width="3" height="3" fill="rgba(255,255,255,0.35)" />
   </svg>
 );
 
-const WaveMesh = () => (
-  <svg
-    viewBox="0 0 300 160"
-    fill="none"
-    className="w-full h-auto opacity-30"
-    preserveAspectRatio="xMidYMid meet"
-  >
-    {Array.from({ length: 12 }).map((_, i) => {
-      const yBase = 10 + i * 13;
-      const amp = 18 + i * 1.5;
-      const d = `M0 ${yBase} Q75 ${yBase - amp} 150 ${yBase} Q225 ${yBase + amp} 300 ${yBase}`;
+const HR = ({ className = '' }: { className?: string }) => (
+  <div className={`w-full h-px bg-white/[0.12] ${className}`} />
+);
+
+const WaveMesh = ({ className = '' }: { className?: string }) => (
+  <svg viewBox="0 0 260 180" fill="none" className={className} preserveAspectRatio="xMidYMid meet">
+    {Array.from({ length: 14 }).map((_, i) => {
+      const y = 8 + i * 12;
+      const a = 16 + i * 2;
       return (
         <path
           key={i}
-          d={d}
-          stroke="rgba(255,255,255,0.4)"
-          strokeWidth="0.6"
-          fill="none"
+          d={`M0 ${y} Q65 ${y - a} 130 ${y} Q195 ${y + a} 260 ${y}`}
+          stroke="rgba(255,255,255,0.35)"
+          strokeWidth="0.5"
         />
       );
     })}
   </svg>
 );
 
+const ArcLines = ({ className = '' }: { className?: string }) => (
+  <svg viewBox="0 0 300 260" fill="none" className={className}>
+    <circle cx="280" cy="130" r="60"  stroke="rgba(255,255,255,0.15)" strokeWidth="0.5" />
+    <circle cx="280" cy="130" r="100" stroke="rgba(255,255,255,0.10)" strokeWidth="0.5" />
+    <circle cx="280" cy="130" r="140" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
+    <circle cx="280" cy="130" r="180" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+    {Array.from({ length: 12 }).map((_, i) => {
+      const angle = (i * Math.PI) / 6;
+      return (
+        <line
+          key={i}
+          x1="280" y1="130"
+          x2={280 + Math.cos(angle) * 200}
+          y2={130 + Math.sin(angle) * 200}
+          stroke="rgba(255,255,255,0.04)"
+          strokeWidth="0.4"
+        />
+      );
+    })}
+  </svg>
+);
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, delay: i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] },
+  }),
+};
+
+/* ── services data ────────────────────────────────────── */
+
+const services = [
+  { num: '01', title: 'STRATEGY', desc: 'Business objectives, positioning, audience and digital roadmap.' },
+  { num: '02', title: 'BRAND', desc: 'Identity, visual systems and digital presence built for recognition.' },
+  { num: '03', title: 'PRODUCT', desc: 'Websites, applications, platforms and user experiences.' },
+  { num: '04', title: 'TECHNOLOGY', desc: 'Software, ERP, integrations and intelligent automation.' },
+  { num: '05', title: 'GROWTH', desc: 'Performance marketing, acquisition, optimization and scale.' },
+];
+
+/* ── COMPONENT ────────────────────────────────────────── */
+
 export function DataImpact() {
   return (
-    <section
-      style={{
-        background: '#000',
-        padding: 'clamp(60px, 8vw, 100px) clamp(24px, 4vw, 56px)',
-        fontFamily: "'Orbitron', 'Space Grotesk', sans-serif",
-      }}
-    >
-      {/* Top label row */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '32px',
-          marginBottom: '48px',
-          fontSize: '10px',
-          fontWeight: 600,
-          letterSpacing: '0.16em',
-          textTransform: 'uppercase' as const,
-          color: 'rgba(255,255,255,0.35)',
-        }}
-      >
-        <span>STRATEGY</span>
-        <span>TECHNOLOGY</span>
-        <span>GROWTH</span>
+    <section className="w-full bg-black px-4 sm:px-6 lg:px-10 py-16 lg:py-24" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+
+      {/* ═══════════════ PANEL 1 ═══════════════ */}
+      <div className="w-full rounded-[20px] border border-white/[0.08] overflow-hidden">
+
+        {/* top nav bar */}
+        <div className="flex items-center gap-8 px-8 py-5 border-b border-white/[0.08] bg-[#0a0a0a]">
+          {['STRATEGY', 'TECHNOLOGY', 'GROWTH'].map((t) => (
+            <span key={t} className="text-[11px] font-semibold tracking-[0.3em] text-[#666] uppercase">{t}</span>
+          ))}
+        </div>
+
+        {/* 4-col grid — collapses on mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-[35%_22%_22%_21%]">
+
+          {/* ── COL 1 ── */}
+          <motion.div
+            className="relative bg-[#0a0a0a] p-8 lg:p-10 flex flex-col justify-between min-h-[420px] border-b md:border-b-0 md:border-r border-white/[0.08] overflow-hidden"
+            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={0} variants={fadeUp}
+          >
+            <div>
+              <h2 className="text-white font-bold uppercase text-[clamp(24px,2.8vw,32px)] leading-[1.15] tracking-tight">
+                DATA THAT TURNS<br />INTO BUSINESS<br />IMPACT
+              </h2>
+              <HR className="mt-6" />
+            </div>
+
+            {/* large faint circle */}
+            <div className="absolute -bottom-24 -right-16 w-[320px] h-[320px] rounded-full border border-white/[0.06] pointer-events-none" />
+
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <HR className="flex-1" />
+                <Checker />
+              </div>
+              <p className="text-[#999] text-[13px] leading-[1.7] font-normal max-w-[280px]" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                We combine strategy, technology and performance to build digital systems that don't just look good — they move the business forward.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* ── COL 2: 01 strategy ── */}
+          <motion.div
+            className="relative bg-[#111] p-8 lg:p-10 flex flex-col justify-between min-h-[420px] border-b md:border-b-0 md:border-r border-white/[0.08] overflow-hidden"
+            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={1} variants={fadeUp}
+          >
+            <div>
+              <span className="block text-white font-black text-[clamp(64px,6vw,90px)] leading-[0.85]">01</span>
+              <span className="block text-white font-bold text-[clamp(22px,2.2vw,28px)] mt-1 lowercase">strategy</span>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <Checker />
+                <HR className="flex-1" />
+              </div>
+              <p className="text-[#999] text-[13px] leading-[1.7] font-normal" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                A clear direction before a single pixel, line of code or campaign is launched.
+              </p>
+            </div>
+
+            {/* wave mesh decoration */}
+            <WaveMesh className="absolute top-4 right-0 w-[70%] opacity-[0.08] pointer-events-none" />
+          </motion.div>
+
+          {/* ── COL 3: 02 systems ── */}
+          <motion.div
+            className="relative bg-[#0f0f0f] p-8 lg:p-10 flex flex-col justify-between min-h-[420px] border-b md:border-b-0 md:border-r border-white/[0.08] overflow-hidden"
+            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={2} variants={fadeUp}
+          >
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <Checker />
+                <HR className="flex-1" />
+              </div>
+            </div>
+
+            <div>
+              <span className="block text-white font-black text-[clamp(64px,6vw,90px)] leading-[0.85]">02</span>
+              <span className="block text-white font-bold text-[clamp(22px,2.2vw,28px)] mt-1 lowercase">systems</span>
+              <p className="text-[#999] text-[13px] leading-[1.7] font-normal mt-4" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                Digital experiences designed to connect people, products, data and operations.
+              </p>
+            </div>
+
+            {/* wave mesh */}
+            <WaveMesh className="absolute bottom-0 left-0 w-full opacity-[0.10] pointer-events-none" />
+          </motion.div>
+
+          {/* ── COL 4: 03 GROWTH ── */}
+          <motion.div
+            className="relative bg-[#0a0a0a] p-8 lg:p-10 flex flex-col justify-between min-h-[420px] overflow-hidden"
+            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={3} variants={fadeUp}
+          >
+            {/* arc lines decoration */}
+            <ArcLines className="absolute -top-8 -right-12 w-[120%] h-auto pointer-events-none" />
+
+            <div className="relative z-10">
+              <span className="block text-white font-black text-[clamp(64px,6vw,90px)] leading-[0.85]">03</span>
+              <span className="block text-white font-extrabold text-[clamp(22px,2.2vw,28px)] mt-1 uppercase">GROWTH</span>
+              <p className="text-[#999] text-[13px] leading-[1.7] font-normal mt-4" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                Performance that creates momentum.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 relative z-10">
+              <HR className="flex-1" />
+              <Checker />
+            </div>
+          </motion.div>
+        </div>
       </div>
 
-      {/* Main bento grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr 1fr',
-          gridTemplateRows: 'auto auto',
-          gap: '2px',
-        }}
-      >
-        {/* ── Left: Heading (spans 2 rows) ── */}
-        <div
-          style={{
-            gridColumn: '1',
-            gridRow: '1 / 3',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            paddingRight: 'clamp(24px, 3vw, 48px)',
-            paddingBottom: '24px',
-          }}
-        >
-          <h2
-            style={{
-              fontFamily: "'Orbitron', sans-serif",
-              fontWeight: 800,
-              fontSize: 'clamp(28px, 3.5vw, 48px)',
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-              textTransform: 'uppercase' as const,
-              color: '#fff',
-              marginBottom: '40px',
-            }}
+      {/* ═══════════════ PANEL 2 ═══════════════ */}
+      <div className="w-full rounded-[20px] border border-white/[0.08] overflow-hidden mt-3 bg-[#0a0a0a]">
+        <div className="grid grid-cols-1 md:grid-cols-[35%_65%]">
+
+          {/* ── Left col ── */}
+          <motion.div
+            className="relative p-8 lg:p-12 flex flex-col justify-between min-h-[420px] border-b md:border-b-0 md:border-r border-white/[0.08] overflow-hidden"
+            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={0} variants={fadeUp}
           >
-            DATA THAT TURNS
-            <br />
-            INTO BUSINESS
-            <br />
-            IMPACT
-          </h2>
+            {/* large faint circle */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(80%,380px)] aspect-square rounded-full border border-white/[0.06] pointer-events-none" />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <CornerMark />
-            <p
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 'clamp(12px, 1.1vw, 15px)',
-                lineHeight: 1.7,
-                color: 'rgba(255,255,255,0.45)',
-                fontWeight: 400,
-                maxWidth: '320px',
-              }}
-            >
-              We combine strategy, technology
-              and performance to build digital
-              systems that don't just look good —
-              they move the business forward.
-            </p>
-          </div>
-        </div>
+            <div className="relative z-10">
+              <span className="block text-[10px] font-semibold tracking-[0.3em] text-[#666] uppercase mb-8">
+                THE WE.ZON SYSTEM
+              </span>
 
-        {/* ── Card 01: Strategy ── */}
-        <div
-          style={{
-            gridColumn: '2',
-            gridRow: '1',
-            background: '#0d0d0d',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.07)',
-            padding: 'clamp(24px, 2.5vw, 36px)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            minHeight: '240px',
-            position: 'relative',
-          }}
-        >
-          <div>
-            <span
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: 'clamp(48px, 5vw, 72px)',
-                fontWeight: 900,
-                color: '#fff',
-                lineHeight: 0.9,
-                display: 'block',
-              }}
-            >
-              01
-            </span>
-            <span
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: 'clamp(22px, 2.5vw, 34px)',
-                fontWeight: 700,
-                color: '#fff',
-                display: 'block',
-                marginTop: '4px',
-                textTransform: 'lowercase' as const,
-              }}
-            >
-              strategy
-            </span>
-          </div>
+              <h2 className="text-white font-bold uppercase text-[clamp(26px,3vw,34px)] leading-[1.15] tracking-tight">
+                ONE SYSTEM.<br />EVERY DIGITAL<br />TOUCHPOINT.
+              </h2>
+            </div>
 
-          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '16px' }}>
-            <CornerMark />
-            <p
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 'clamp(11px, 0.9vw, 13px)',
-                lineHeight: 1.6,
-                color: 'rgba(255,255,255,0.4)',
-                fontWeight: 400,
-                maxWidth: '200px',
-              }}
-            >
-              A clear direction before a single pixel, line of code or campaign is launched.
-            </p>
-          </div>
-        </div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-4">
+                <HR className="flex-1" />
+                <Checker />
+              </div>
+              <p className="text-[#999] text-[13px] leading-[1.7] font-normal max-w-[320px]" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                WE.ZON brings strategy, design, technology and growth under one connected system.
+              </p>
+            </div>
+          </motion.div>
 
-        {/* ── Card 03: Growth (top-right, spans 2 rows) ── */}
-        <div
-          style={{
-            gridColumn: '3',
-            gridRow: '1 / 3',
-            background: '#0d0d0d',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.07)',
-            padding: 'clamp(24px, 2.5vw, 36px)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Decorative arcs at top */}
-          <div style={{ position: 'relative' }}>
-            <CornerMark />
-            <svg
-              viewBox="0 0 300 200"
-              fill="none"
-              style={{
-                position: 'absolute',
-                top: '-20px',
-                right: '-40px',
-                width: '110%',
-                opacity: 0.12,
-              }}
-            >
-              <circle cx="260" cy="100" r="80" stroke="#fff" strokeWidth="0.5" />
-              <circle cx="260" cy="100" r="120" stroke="#fff" strokeWidth="0.5" />
-              <circle cx="260" cy="100" r="160" stroke="#fff" strokeWidth="0.5" />
-              {/* Radial lines */}
-              {Array.from({ length: 8 }).map((_, i) => {
-                const angle = (i * Math.PI) / 4;
-                const x2 = 260 + Math.cos(angle) * 180;
-                const y2 = 100 + Math.sin(angle) * 180;
-                return <line key={i} x1="260" y1="100" x2={x2} y2={y2} stroke="#fff" strokeWidth="0.3" />;
-              })}
-            </svg>
-          </div>
-
-          {/* Bottom content */}
-          <div>
-            <span
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: 'clamp(48px, 5vw, 72px)',
-                fontWeight: 900,
-                color: '#fff',
-                lineHeight: 0.9,
-                display: 'block',
-              }}
-            >
-              03
-            </span>
-            <span
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: 'clamp(22px, 2.5vw, 34px)',
-                fontWeight: 800,
-                color: '#fff',
-                display: 'block',
-                marginTop: '4px',
-                textTransform: 'uppercase' as const,
-              }}
-            >
-              GROWTH
-            </span>
-            <p
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 'clamp(11px, 0.9vw, 13px)',
-                lineHeight: 1.6,
-                color: 'rgba(255,255,255,0.4)',
-                fontWeight: 400,
-                marginTop: '12px',
-                maxWidth: '200px',
-              }}
-            >
-              Performance that creates momentum.
-            </p>
-            <CornerMark className="mt-4" />
-          </div>
-        </div>
-
-        {/* ── Card 02: Systems ── */}
-        <div
-          style={{
-            gridColumn: '2',
-            gridRow: '2',
-            background: '#0d0d0d',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.07)',
-            padding: 'clamp(24px, 2.5vw, 36px)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            minHeight: '240px',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <div>
-            <WaveMesh />
-          </div>
-
-          <div>
-            <span
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: 'clamp(48px, 5vw, 72px)',
-                fontWeight: 900,
-                color: '#fff',
-                lineHeight: 0.9,
-                display: 'block',
-              }}
-            >
-              02
-            </span>
-            <span
-              style={{
-                fontFamily: "'Orbitron', sans-serif",
-                fontSize: 'clamp(22px, 2.5vw, 34px)',
-                fontWeight: 700,
-                color: '#fff',
-                display: 'block',
-                marginTop: '4px',
-                textTransform: 'lowercase' as const,
-              }}
-            >
-              systems
-            </span>
-            <p
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 'clamp(11px, 0.9vw, 13px)',
-                lineHeight: 1.6,
-                color: 'rgba(255,255,255,0.4)',
-                fontWeight: 400,
-                marginTop: '12px',
-                maxWidth: '220px',
-              }}
-            >
-              Digital experiences designed to connect people, products, data and operations.
-            </p>
+          {/* ── Right col: service list ── */}
+          <div className="flex flex-col">
+            {services.map((s, i) => (
+              <motion.div
+                key={s.num}
+                className={`flex items-start gap-5 px-8 lg:px-12 py-7 ${i < services.length - 1 ? 'border-b border-white/[0.08]' : ''}`}
+                initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} custom={i} variants={fadeUp}
+              >
+                <Checker className="mt-1" />
+                <div>
+                  <span className="block text-white font-bold text-[clamp(14px,1.2vw,16px)] tracking-[0.06em] uppercase">
+                    {s.num} — {s.title}
+                  </span>
+                  <p className="text-[#888] text-[13px] leading-[1.6] font-normal mt-1" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+                    {s.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>
