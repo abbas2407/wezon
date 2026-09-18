@@ -93,15 +93,34 @@ export function DataImpact() {
             className="lg:col-span-3 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10 relative overflow-hidden"
             custom={1} variants={fadeUp}
           >
-            {/* wave lines bg */}
-            <svg className="absolute -bottom-6 -left-12 w-[340px] h-[220px] pointer-events-none opacity-30 text-white" fill="none" viewBox="0 0 300 200">
-              <path d="M-20 180 C 40 130, 120 190, 200 120 C 240 85, 280 130, 320 90" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M-20 170 C 45 125, 125 180, 205 115 C 245 80, 285 125, 325 85" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M-20 160 C 50 120, 130 170, 210 110 C 250 75, 290 120, 330 80" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M-20 150 C 55 115, 135 160, 215 105 C 255 70, 295 115, 335 75" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M-20 140 C 60 110, 140 150, 220 100 C 260 65, 300 110, 340 70" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M-20 130 C 65 105, 145 140, 225 95 C 265 60, 305 105, 345 65" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M-20 120 C 70 100, 150 130, 230 90 C 270 55, 310 100, 350 60" stroke="currentColor" strokeWidth="0.8" />
+            {/* flowing wave mesh — bottom of col 2 */}
+            <svg className="absolute -bottom-4 -left-8 w-[360px] h-[240px] pointer-events-none text-white/[0.35]" fill="none" viewBox="0 0 360 240">
+              {/* dense flowing mesh lines converging and spreading */}
+              <path d="M-10 240 C 30 220, 80 180, 140 170 C 200 160, 260 190, 370 150" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 235 C 35 210, 85 175, 145 162 C 205 150, 265 180, 370 142" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 228 C 40 200, 90 168, 150 154 C 210 140, 270 170, 370 134" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 220 C 45 190, 95 160, 155 145 C 215 130, 275 160, 370 126" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 212 C 50 180, 100 152, 160 136 C 220 120, 280 150, 370 118" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 204 C 55 170, 105 144, 165 127 C 225 110, 285 140, 370 110" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 196 C 60 160, 110 136, 170 118 C 230 100, 290 130, 370 102" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 188 C 65 150, 115 128, 175 110 C 235 92, 295 120, 370 94" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 180 C 70 140, 120 120, 180 102 C 240 84, 300 110, 370 86" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 172 C 75 132, 125 112, 185 94 C 245 76, 305 100, 370 78" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 164 C 80 124, 130 104, 190 86 C 250 68, 310 92, 370 72" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 156 C 85 116, 135 96, 195 78 C 255 60, 315 84, 370 66" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 148 C 90 108, 140 88, 200 72 C 260 56, 318 76, 370 60" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 140 C 95 100, 145 82, 205 66 C 265 50, 320 68, 370 54" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 132 C 100 94, 148 76, 208 60 C 268 44, 322 62, 370 48" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 124 C 105 88, 150 70, 210 55 C 270 40, 324 56, 370 44" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 116 C 108 82, 152 64, 212 50 C 272 36, 326 50, 370 40" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 108 C 110 76, 154 58, 214 46 C 274 34, 328 46, 370 36" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 100 C 112 72, 156 54, 216 42 C 276 30, 330 42, 370 32" stroke="currentColor" strokeWidth="0.6" />
+              {/* crossing mesh lines for depth */}
+              <path d="M-10 240 C 60 200, 140 140, 200 120 C 260 100, 310 130, 370 90" stroke="currentColor" strokeWidth="0.4" />
+              <path d="M-10 230 C 70 185, 150 130, 210 108 C 270 86, 315 118, 370 80" stroke="currentColor" strokeWidth="0.4" />
+              <path d="M-10 220 C 80 172, 155 120, 215 98 C 275 76, 318 106, 370 72" stroke="currentColor" strokeWidth="0.4" />
+              <path d="M-10 210 C 85 160, 158 112, 218 90 C 278 68, 320 96, 370 64" stroke="currentColor" strokeWidth="0.4" />
+              <path d="M-10 200 C 88 150, 160 105, 220 84 C 280 63, 322 88, 370 58" stroke="currentColor" strokeWidth="0.4" />
             </svg>
 
             <div className="relative z-10">
@@ -139,14 +158,33 @@ export function DataImpact() {
             className="lg:col-span-3 p-8 sm:p-8 flex flex-col justify-between relative overflow-hidden"
             custom={3} variants={fadeUp}
           >
-            {/* wave lines top-right */}
-            <svg className="absolute top-0 right-0 w-[240px] h-[130px] pointer-events-none opacity-30 text-white" fill="none" viewBox="0 0 240 130">
-              <path d="M0 40 C 60 10, 120 70, 240 20" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M0 50 C 60 20, 120 80, 240 30" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M0 60 C 60 30, 120 90, 240 40" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M0 70 C 60 40, 120 100, 240 50" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M0 80 C 60 50, 120 110, 240 60" stroke="currentColor" strokeWidth="0.8" />
-              <path d="M0 90 C 60 60, 120 120, 240 70" stroke="currentColor" strokeWidth="0.8" />
+            {/* flowing wave mesh — top of col 4 */}
+            <svg className="absolute -top-2 -right-4 w-[320px] h-[220px] pointer-events-none text-white/[0.35]" fill="none" viewBox="0 0 320 220">
+              {/* primary flowing lines — converge from left, spread right */}
+              <path d="M-10 0 C 40 20, 100 60, 160 70 C 220 80, 280 50, 330 30" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 8 C 45 26, 105 64, 165 76 C 225 88, 282 56, 330 38" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 16 C 50 32, 110 68, 170 82 C 230 96, 284 62, 330 46" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 24 C 55 38, 115 72, 175 88 C 235 104, 286 68, 330 54" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 32 C 60 44, 120 76, 180 94 C 240 112, 288 74, 330 62" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 40 C 65 50, 125 80, 185 100 C 245 120, 290 80, 330 70" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 48 C 70 56, 130 84, 190 106 C 250 128, 292 86, 330 78" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 56 C 74 62, 134 88, 194 112 C 254 136, 294 92, 330 86" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 64 C 78 68, 138 92, 198 118 C 258 144, 296 98, 330 94" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 72 C 82 74, 142 96, 202 124 C 262 152, 298 104, 330 102" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 80 C 86 80, 146 100, 206 130 C 266 160, 300 110, 330 110" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 88 C 88 86, 148 104, 208 136 C 268 168, 302 116, 330 118" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 96 C 90 92, 150 108, 210 140 C 268 172, 304 122, 330 126" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 104 C 92 98, 152 112, 212 146 C 270 180, 306 128, 330 134" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 112 C 94 104, 154 116, 214 152 C 272 188, 308 134, 330 142" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 120 C 96 110, 156 120, 216 156 C 274 192, 310 140, 330 150" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 128 C 98 116, 158 124, 218 160 C 276 196, 312 146, 330 158" stroke="currentColor" strokeWidth="0.6" />
+              <path d="M-10 136 C 100 122, 160 128, 220 164 C 278 200, 314 152, 330 166" stroke="currentColor" strokeWidth="0.6" />
+              {/* crossing mesh for depth */}
+              <path d="M-10 10 C 60 40, 140 90, 200 110 C 260 130, 300 90, 330 60" stroke="currentColor" strokeWidth="0.4" />
+              <path d="M-10 30 C 70 55, 148 100, 208 118 C 268 136, 304 98, 330 72" stroke="currentColor" strokeWidth="0.4" />
+              <path d="M-10 50 C 76 68, 152 108, 212 128 C 272 148, 306 106, 330 86" stroke="currentColor" strokeWidth="0.4" />
+              <path d="M-10 70 C 80 80, 156 116, 216 138 C 276 160, 308 114, 330 100" stroke="currentColor" strokeWidth="0.4" />
+              <path d="M-10 90 C 84 92, 160 124, 220 148 C 280 172, 310 122, 330 114" stroke="currentColor" strokeWidth="0.4" />
             </svg>
 
             <div />
