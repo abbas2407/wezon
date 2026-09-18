@@ -47,12 +47,12 @@ const services = [
 
 export function DataImpact() {
   return (
-    <section className="w-full bg-[#08080a] px-3 sm:px-6 lg:px-10 py-8 font-space-grotesk">
-      <div className="max-w-[1240px] mx-auto flex flex-col gap-8">
+    <section className="w-full bg-[#08080a] px-3 sm:px-4 lg:px-6 py-4 font-space-grotesk">
+      <div className="w-full mx-auto flex flex-col gap-4">
 
         {/* ════════════ PANEL 1: 4-Column Grid ════════════ */}
         <motion.div
-          className="w-full bg-[#121215] border border-white/10 rounded-sm overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px] relative"
+          className="w-full bg-[#121215] border border-white/10 rounded-sm overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[640px] relative"
           initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }}
         >
           {/* ── Col 1: Impact (4 cols) ── */}
@@ -205,7 +205,7 @@ export function DataImpact() {
 
         {/* ════════════ PANEL 2: WE.ZON System ════════════ */}
         <motion.div
-          className="w-full bg-[#121215] border border-white/10 rounded-sm p-8 sm:p-12 lg:p-14 relative overflow-hidden"
+          className="w-full bg-[#121215] border border-white/10 rounded-sm p-8 sm:p-12 lg:p-16 relative overflow-hidden"
           initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.15 }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-stretch">
