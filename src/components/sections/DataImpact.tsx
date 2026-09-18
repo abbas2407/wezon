@@ -1,82 +1,70 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-/* ── tiny reusable pieces ─────────────────────────────── */
+/* ── decorative atoms ─────────────────────────────────── */
 
-const Checker = ({ className = '' }: { className?: string }) => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className={`shrink-0 ${className}`}>
-    <rect x="0"  y="0"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
-    <rect x="4"  y="0"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="0"  y="4"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="4"  y="4"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
-    <rect x="8"  y="0"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
-    <rect x="12" y="0"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="8"  y="4"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="12" y="4"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
-    <rect x="0"  y="8"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
-    <rect x="4"  y="8"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="8"  y="8"  width="3" height="3" fill="rgba(255,255,255,0.35)" />
-    <rect x="12" y="8"  width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="0"  y="12" width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="4"  y="12" width="3" height="3" fill="rgba(255,255,255,0.35)" />
-    <rect x="8"  y="12" width="3" height="3" fill="rgba(255,255,255,0.12)" />
-    <rect x="12" y="12" width="3" height="3" fill="rgba(255,255,255,0.35)" />
+const Checker = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0">
+    <rect x="0"  y="0" width="3" height="3" fill="rgba(255,255,255,0.4)" />
+    <rect x="4"  y="0" width="3" height="3" fill="rgba(255,255,255,0.13)" />
+    <rect x="8"  y="0" width="3" height="3" fill="rgba(255,255,255,0.4)" />
+    <rect x="0"  y="4" width="3" height="3" fill="rgba(255,255,255,0.13)" />
+    <rect x="4"  y="4" width="3" height="3" fill="rgba(255,255,255,0.4)" />
+    <rect x="8"  y="4" width="3" height="3" fill="rgba(255,255,255,0.13)" />
+    <rect x="0"  y="8" width="3" height="3" fill="rgba(255,255,255,0.4)" />
+    <rect x="4"  y="8" width="3" height="3" fill="rgba(255,255,255,0.13)" />
+    <rect x="8"  y="8" width="3" height="3" fill="rgba(255,255,255,0.4)" />
+    <rect x="12" y="0" width="2" height="3" fill="rgba(255,255,255,0.13)" />
+    <rect x="12" y="4" width="2" height="3" fill="rgba(255,255,255,0.4)" />
+    <rect x="12" y="8" width="2" height="3" fill="rgba(255,255,255,0.13)" />
   </svg>
 );
 
-const HR = ({ className = '' }: { className?: string }) => (
-  <div className={`w-full h-px bg-white/[0.12] ${className}`} />
-);
+const Divider = () => <div style={{ width: '100%', height: '1px', background: 'rgba(255,255,255,0.10)' }} />;
 
-const WaveMesh = ({ className = '' }: { className?: string }) => (
-  <svg viewBox="0 0 260 180" fill="none" className={className} preserveAspectRatio="xMidYMid meet">
-    {Array.from({ length: 14 }).map((_, i) => {
-      const y = 8 + i * 12;
-      const a = 16 + i * 2;
+const WaveMesh = () => (
+  <svg viewBox="0 0 240 160" fill="none" style={{ width: '100%', height: 'auto' }}>
+    {Array.from({ length: 16 }).map((_, i) => {
+      const y = 6 + i * 10;
+      const amp = 12 + i * 2.2;
       return (
         <path
           key={i}
-          d={`M0 ${y} Q65 ${y - a} 130 ${y} Q195 ${y + a} 260 ${y}`}
+          d={`M0 ${y} C60 ${y - amp}, 120 ${y + amp}, 180 ${y} S240 ${y - amp * 0.6}, 240 ${y}`}
           stroke="rgba(255,255,255,0.35)"
-          strokeWidth="0.5"
+          strokeWidth="0.45"
+          fill="none"
         />
       );
     })}
   </svg>
 );
 
-const ArcLines = ({ className = '' }: { className?: string }) => (
-  <svg viewBox="0 0 300 260" fill="none" className={className}>
-    <circle cx="280" cy="130" r="60"  stroke="rgba(255,255,255,0.15)" strokeWidth="0.5" />
-    <circle cx="280" cy="130" r="100" stroke="rgba(255,255,255,0.10)" strokeWidth="0.5" />
-    <circle cx="280" cy="130" r="140" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
-    <circle cx="280" cy="130" r="180" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
-    {Array.from({ length: 12 }).map((_, i) => {
-      const angle = (i * Math.PI) / 6;
+const ArcDecoration = () => (
+  <svg viewBox="0 0 300 300" fill="none" style={{ width: '100%', height: '100%' }}>
+    <circle cx="300" cy="0" r="80"  stroke="rgba(255,255,255,0.12)" strokeWidth="0.5" />
+    <circle cx="300" cy="0" r="130" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
+    <circle cx="300" cy="0" r="180" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
+    <circle cx="300" cy="0" r="230" stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" />
+    {Array.from({ length: 16 }).map((_, i) => {
+      const a = (i * Math.PI) / 8;
       return (
-        <line
-          key={i}
-          x1="280" y1="130"
-          x2={280 + Math.cos(angle) * 200}
-          y2={130 + Math.sin(angle) * 200}
-          stroke="rgba(255,255,255,0.04)"
-          strokeWidth="0.4"
-        />
+        <line key={i} x1="300" y1="0" x2={300 + Math.cos(a) * 250} y2={Math.sin(a) * 250}
+          stroke="rgba(255,255,255,0.03)" strokeWidth="0.4" />
       );
     })}
   </svg>
 );
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 36 },
   visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, delay: i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] },
+    opacity: 1, y: 0,
+    transition: { duration: 0.65, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] },
   }),
 };
 
-/* ── services data ────────────────────────────────────── */
+const FONT = "'Orbitron', sans-serif";
 
 const services = [
   { num: '01', title: 'STRATEGY', desc: 'Business objectives, positioning, audience and digital roadmap.' },
@@ -86,178 +74,305 @@ const services = [
   { num: '05', title: 'GROWTH', desc: 'Performance marketing, acquisition, optimization and scale.' },
 ];
 
-/* ── COMPONENT ────────────────────────────────────────── */
+/* ── MAIN COMPONENT ───────────────────────────────────── */
 
 export function DataImpact() {
   return (
-    <section className="w-full bg-black px-4 sm:px-6 lg:px-10 py-16 lg:py-24" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+    <section style={{ background: '#000', fontFamily: FONT, padding: '24px clamp(16px, 3vw, 40px)' }}>
 
-      {/* ═══════════════ PANEL 1 ═══════════════ */}
-      <div className="w-full rounded-[20px] border border-white/[0.08] overflow-hidden">
-
-        {/* top nav bar */}
-        <div className="flex items-center gap-8 px-8 py-5 border-b border-white/[0.08] bg-[#0a0a0a]">
+      {/* ════════════ PANEL 1 ════════════ */}
+      <div style={{
+        borderRadius: '20px',
+        border: '1px solid rgba(255,255,255,0.08)',
+        overflow: 'hidden',
+      }}>
+        {/* top nav labels */}
+        <div style={{
+          display: 'flex', gap: '28px', padding: '18px 32px',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          background: '#0a0a0a',
+        }}>
           {['STRATEGY', 'TECHNOLOGY', 'GROWTH'].map((t) => (
-            <span key={t} className="text-[11px] font-semibold tracking-[0.3em] text-[#666] uppercase">{t}</span>
+            <span key={t} style={{
+              fontFamily: FONT, fontSize: '10px', fontWeight: 600,
+              letterSpacing: '0.28em', color: '#555', textTransform: 'uppercase',
+            }}>{t}</span>
           ))}
         </div>
 
-        {/* 4-col grid — collapses on mobile */}
-        <div className="grid grid-cols-1 md:grid-cols-[35%_22%_22%_21%]">
+        {/* 4-column grid */}
+        <div data-impact-grid style={{ display: 'grid', gridTemplateColumns: '35% 22% 22% 21%' }}>
 
-          {/* ── COL 1 ── */}
+          {/* ── COL 1 ────────────────────── */}
           <motion.div
-            className="relative bg-[#0a0a0a] p-8 lg:p-10 flex flex-col justify-between min-h-[420px] border-b md:border-b-0 md:border-r border-white/[0.08] overflow-hidden"
+            style={{
+              background: '#0c0c0c', padding: '36px 32px',
+              borderRight: '1px solid rgba(255,255,255,0.08)',
+              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              minHeight: '480px', position: 'relative', overflow: 'hidden',
+            }}
             initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={0} variants={fadeUp}
           >
             <div>
-              <h2 className="text-white font-bold uppercase text-[clamp(24px,2.8vw,32px)] leading-[1.15] tracking-tight">
+              <h2 style={{
+                fontFamily: FONT, fontWeight: 800, fontSize: 'clamp(22px, 2.6vw, 32px)',
+                lineHeight: 1.18, letterSpacing: '-0.01em', textTransform: 'uppercase',
+                color: '#fff', margin: 0,
+              }}>
                 DATA THAT TURNS<br />INTO BUSINESS<br />IMPACT
               </h2>
-              <HR className="mt-6" />
+              <div style={{ marginTop: '24px' }}><Divider /></div>
             </div>
 
-            {/* large faint circle */}
-            <div className="absolute -bottom-24 -right-16 w-[320px] h-[320px] rounded-full border border-white/[0.06] pointer-events-none" />
+            {/* faint circle */}
+            <div style={{
+              position: 'absolute', bottom: '-100px', right: '-60px',
+              width: '320px', height: '320px', borderRadius: '50%',
+              border: '1px solid rgba(255,255,255,0.06)', pointerEvents: 'none',
+            }} />
 
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <HR className="flex-1" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                <div style={{ flex: 1 }}><Divider /></div>
                 <Checker />
               </div>
-              <p className="text-[#999] text-[13px] leading-[1.7] font-normal max-w-[280px]" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+              <p style={{
+                fontFamily: FONT, fontSize: '12px', lineHeight: 1.75,
+                color: '#777', fontWeight: 400, maxWidth: '280px', margin: 0,
+              }}>
                 We combine strategy, technology and performance to build digital systems that don't just look good — they move the business forward.
               </p>
             </div>
           </motion.div>
 
-          {/* ── COL 2: 01 strategy ── */}
+          {/* ── COL 2: 01 strategy ────────── */}
           <motion.div
-            className="relative bg-[#111] p-8 lg:p-10 flex flex-col justify-between min-h-[420px] border-b md:border-b-0 md:border-r border-white/[0.08] overflow-hidden"
+            style={{
+              background: '#131313', padding: '36px 28px',
+              borderRight: '1px solid rgba(255,255,255,0.08)',
+              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              minHeight: '480px', position: 'relative', overflow: 'hidden',
+            }}
             initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={1} variants={fadeUp}
           >
             <div>
-              <span className="block text-white font-black text-[clamp(64px,6vw,90px)] leading-[0.85]">01</span>
-              <span className="block text-white font-bold text-[clamp(22px,2.2vw,28px)] mt-1 lowercase">strategy</span>
+              <span style={{
+                fontFamily: FONT, fontSize: 'clamp(60px, 7vw, 90px)',
+                fontWeight: 900, color: '#fff', lineHeight: 0.85, display: 'block',
+                letterSpacing: '-0.02em',
+              }}>01</span>
+              <span style={{
+                fontFamily: FONT, fontSize: 'clamp(20px, 2.4vw, 28px)',
+                fontWeight: 600, color: '#fff', display: 'block', marginTop: '6px',
+                textTransform: 'lowercase',
+              }}>strategy</span>
             </div>
 
             <div>
-              <div className="flex items-center gap-3 mb-4">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                 <Checker />
-                <HR className="flex-1" />
+                <div style={{ flex: 1 }}><Divider /></div>
               </div>
-              <p className="text-[#999] text-[13px] leading-[1.7] font-normal" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+              <p style={{
+                fontFamily: FONT, fontSize: '11px', lineHeight: 1.7,
+                color: '#777', fontWeight: 400, margin: 0,
+              }}>
                 A clear direction before a single pixel, line of code or campaign is launched.
               </p>
             </div>
-
-            {/* wave mesh decoration */}
-            <WaveMesh className="absolute top-4 right-0 w-[70%] opacity-[0.08] pointer-events-none" />
           </motion.div>
 
-          {/* ── COL 3: 02 systems ── */}
+          {/* ── COL 3: 02 systems ─────────── */}
           <motion.div
-            className="relative bg-[#0f0f0f] p-8 lg:p-10 flex flex-col justify-between min-h-[420px] border-b md:border-b-0 md:border-r border-white/[0.08] overflow-hidden"
+            style={{
+              background: '#181818', padding: '36px 28px',
+              borderRight: '1px solid rgba(255,255,255,0.08)',
+              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              minHeight: '480px', position: 'relative', overflow: 'hidden',
+            }}
             initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={2} variants={fadeUp}
           >
+            {/* top: checker + line */}
             <div>
-              <div className="flex items-center gap-3 mb-4">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
                 <Checker />
-                <HR className="flex-1" />
+                <div style={{ flex: 1 }}><Divider /></div>
+              </div>
+              {/* wave mesh */}
+              <div style={{ opacity: 0.12 }}>
+                <WaveMesh />
               </div>
             </div>
 
             <div>
-              <span className="block text-white font-black text-[clamp(64px,6vw,90px)] leading-[0.85]">02</span>
-              <span className="block text-white font-bold text-[clamp(22px,2.2vw,28px)] mt-1 lowercase">systems</span>
-              <p className="text-[#999] text-[13px] leading-[1.7] font-normal mt-4" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+              <span style={{
+                fontFamily: FONT, fontSize: 'clamp(60px, 7vw, 90px)',
+                fontWeight: 900, color: '#fff', lineHeight: 0.85, display: 'block',
+                letterSpacing: '-0.02em',
+              }}>02</span>
+              <span style={{
+                fontFamily: FONT, fontSize: 'clamp(20px, 2.4vw, 28px)',
+                fontWeight: 600, color: '#fff', display: 'block', marginTop: '6px',
+                textTransform: 'lowercase',
+              }}>systems</span>
+              <p style={{
+                fontFamily: FONT, fontSize: '11px', lineHeight: 1.7,
+                color: '#777', fontWeight: 400, margin: 0, marginTop: '14px',
+              }}>
                 Digital experiences designed to connect people, products, data and operations.
               </p>
             </div>
 
-            {/* wave mesh */}
-            <WaveMesh className="absolute bottom-0 left-0 w-full opacity-[0.10] pointer-events-none" />
+            {/* bottom checker */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
+              <Checker />
+            </div>
           </motion.div>
 
-          {/* ── COL 4: 03 GROWTH ── */}
+          {/* ── COL 4: 03 GROWTH ──────────── */}
           <motion.div
-            className="relative bg-[#0a0a0a] p-8 lg:p-10 flex flex-col justify-between min-h-[420px] overflow-hidden"
+            style={{
+              background: '#0e0e0e', padding: '36px 28px',
+              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              minHeight: '480px', position: 'relative', overflow: 'hidden',
+            }}
             initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={3} variants={fadeUp}
           >
-            {/* arc lines decoration */}
-            <ArcLines className="absolute -top-8 -right-12 w-[120%] h-auto pointer-events-none" />
+            {/* arc decoration */}
+            <div style={{
+              position: 'absolute', top: '-40px', right: '-40px',
+              width: '300px', height: '300px', pointerEvents: 'none',
+            }}>
+              <ArcDecoration />
+            </div>
 
-            <div className="relative z-10">
-              <span className="block text-white font-black text-[clamp(64px,6vw,90px)] leading-[0.85]">03</span>
-              <span className="block text-white font-extrabold text-[clamp(22px,2.2vw,28px)] mt-1 uppercase">GROWTH</span>
-              <p className="text-[#999] text-[13px] leading-[1.7] font-normal mt-4" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <span style={{
+                fontFamily: FONT, fontSize: 'clamp(60px, 7vw, 90px)',
+                fontWeight: 900, color: '#fff', lineHeight: 0.85, display: 'block',
+                letterSpacing: '-0.02em',
+              }}>03</span>
+              <span style={{
+                fontFamily: FONT, fontSize: 'clamp(20px, 2.4vw, 28px)',
+                fontWeight: 800, color: '#fff', display: 'block', marginTop: '6px',
+                textTransform: 'uppercase', letterSpacing: '0.04em',
+              }}>GROWTH</span>
+              <p style={{
+                fontFamily: FONT, fontSize: '11px', lineHeight: 1.7,
+                color: '#777', fontWeight: 400, margin: 0, marginTop: '14px',
+              }}>
                 Performance that creates momentum.
               </p>
             </div>
 
-            <div className="flex items-center gap-3 relative z-10">
-              <HR className="flex-1" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', position: 'relative', zIndex: 1 }}>
+              <div style={{ flex: 1 }}><Divider /></div>
               <Checker />
             </div>
           </motion.div>
         </div>
       </div>
 
-      {/* ═══════════════ PANEL 2 ═══════════════ */}
-      <div className="w-full rounded-[20px] border border-white/[0.08] overflow-hidden mt-3 bg-[#0a0a0a]">
-        <div className="grid grid-cols-1 md:grid-cols-[35%_65%]">
+      {/* ════════════ PANEL 2 ════════════ */}
+      <div style={{
+        borderRadius: '20px',
+        border: '1px solid rgba(255,255,255,0.08)',
+        overflow: 'hidden',
+        marginTop: '4px',
+        background: '#0a0a0a',
+        display: 'grid',
+        gridTemplateColumns: '38% 62%',
+      }}
+      data-impact-panel2>
+        {/* ── Left col ── */}
+        <motion.div
+          style={{
+            padding: '44px 36px', position: 'relative', overflow: 'hidden',
+            borderRight: '1px solid rgba(255,255,255,0.08)',
+            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+            minHeight: '440px',
+          }}
+          initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={0} variants={fadeUp}
+        >
+          {/* large faint circle */}
+          <div style={{
+            position: 'absolute', left: '50%', top: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 'min(85%, 360px)', aspectRatio: '1', borderRadius: '50%',
+            border: '1px solid rgba(255,255,255,0.06)', pointerEvents: 'none',
+          }} />
 
-          {/* ── Left col ── */}
-          <motion.div
-            className="relative p-8 lg:p-12 flex flex-col justify-between min-h-[420px] border-b md:border-b-0 md:border-r border-white/[0.08] overflow-hidden"
-            initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.3 }} custom={0} variants={fadeUp}
-          >
-            {/* large faint circle */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(80%,380px)] aspect-square rounded-full border border-white/[0.06] pointer-events-none" />
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <span style={{
+              fontFamily: FONT, fontSize: '9px', fontWeight: 600,
+              letterSpacing: '0.3em', color: '#555', textTransform: 'uppercase',
+              display: 'block', marginBottom: '28px',
+            }}>THE WE.ZON SYSTEM</span>
 
-            <div className="relative z-10">
-              <span className="block text-[10px] font-semibold tracking-[0.3em] text-[#666] uppercase mb-8">
-                THE WE.ZON SYSTEM
-              </span>
-
-              <h2 className="text-white font-bold uppercase text-[clamp(26px,3vw,34px)] leading-[1.15] tracking-tight">
-                ONE SYSTEM.<br />EVERY DIGITAL<br />TOUCHPOINT.
-              </h2>
-            </div>
-
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-4">
-                <HR className="flex-1" />
-                <Checker />
-              </div>
-              <p className="text-[#999] text-[13px] leading-[1.7] font-normal max-w-[320px]" style={{ fontFamily: "'Orbitron', sans-serif" }}>
-                WE.ZON brings strategy, design, technology and growth under one connected system.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* ── Right col: service list ── */}
-          <div className="flex flex-col">
-            {services.map((s, i) => (
-              <motion.div
-                key={s.num}
-                className={`flex items-start gap-5 px-8 lg:px-12 py-7 ${i < services.length - 1 ? 'border-b border-white/[0.08]' : ''}`}
-                initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} custom={i} variants={fadeUp}
-              >
-                <Checker className="mt-1" />
-                <div>
-                  <span className="block text-white font-bold text-[clamp(14px,1.2vw,16px)] tracking-[0.06em] uppercase">
-                    {s.num} — {s.title}
-                  </span>
-                  <p className="text-[#888] text-[13px] leading-[1.6] font-normal mt-1" style={{ fontFamily: "'Orbitron', sans-serif" }}>
-                    {s.desc}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+            <h2 style={{
+              fontFamily: FONT, fontWeight: 800,
+              fontSize: 'clamp(24px, 2.8vw, 34px)',
+              lineHeight: 1.18, letterSpacing: '-0.01em',
+              textTransform: 'uppercase', color: '#fff', margin: 0,
+            }}>
+              ONE SYSTEM.<br />EVERY DIGITAL<br />TOUCHPOINT.
+            </h2>
           </div>
+
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <div style={{ flex: 1 }}><Divider /></div>
+              <Checker />
+            </div>
+            <p style={{
+              fontFamily: FONT, fontSize: '12px', lineHeight: 1.75,
+              color: '#777', fontWeight: 400, maxWidth: '300px', margin: 0,
+            }}>
+              WE.ZON brings strategy, design, technology and growth under one connected system.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* ── Right col: service list ── */}
+        <div>
+          {services.map((s, i) => (
+            <motion.div
+              key={s.num}
+              style={{
+                display: 'flex', alignItems: 'flex-start', gap: '16px',
+                padding: '26px 36px',
+                borderBottom: i < services.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+              }}
+              initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} custom={i} variants={fadeUp}
+            >
+              <div style={{ paddingTop: '3px' }}><Checker /></div>
+              <div>
+                <span style={{
+                  fontFamily: FONT, fontSize: 'clamp(13px, 1.2vw, 16px)',
+                  fontWeight: 700, color: '#fff', letterSpacing: '0.05em',
+                  textTransform: 'uppercase', display: 'block',
+                }}>
+                  {s.num} — {s.title}
+                </span>
+                <p style={{
+                  fontFamily: FONT, fontSize: '11px', lineHeight: 1.65,
+                  color: '#666', fontWeight: 400, margin: 0, marginTop: '5px',
+                }}>
+                  {s.desc}
+                </p>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
+
+      {/* ── responsive: mobile override ── */}
+      <style>{`
+        @media (max-width: 768px) {
+          [data-impact-grid] { grid-template-columns: 1fr !important; }
+          [data-impact-panel2] { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </section>
   );
 }
