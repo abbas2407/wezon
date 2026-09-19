@@ -11,7 +11,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
 
   useEffect(() => {
     let start = performance.now();
-    const duration = 2200; // 2.2s
+    const duration = 2000;
 
     const animateProgress = (time: number) => {
       const elapsed = time - start;
@@ -22,7 +22,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
         requestAnimationFrame(animateProgress);
       } else {
         setIsLoaded(true);
-        setTimeout(onComplete, 900); // Wait for split animation
+        setTimeout(onComplete, 800);
       }
     };
 
@@ -30,43 +30,22 @@ export function Preloader({ onComplete }: PreloaderProps) {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[100000] pointer-events-none flex flex-col">
-      {/* Top Half */}
-      <motion.div
-        className="flex-1 bg-black w-full origin-top"
-        initial={{ y: '0%' }}
-        animate={{ y: isLoaded ? '-100%' : '0%' }}
-        transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
-      />
+    <motion.div
+      className="fixed inset-0 z-[100000] bg-[#f9f9f9] flex flex-col items-center justify-center pointer-events-none"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: isLoaded ? 0 : 1 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <span className="font-display font-semibold text-[48px] sm:text-[64px] text-text inline-block leading-none mb-8">
+        we<span className="text-accent-dark">.</span>zon
+      </span>
 
-      {/* Bottom Half */}
-      <motion.div
-        className="flex-1 bg-black w-full origin-bottom"
-        initial={{ y: '0%' }}
-        animate={{ y: isLoaded ? '100%' : '0%' }}
-        transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
-      />
-
-      {/* Center Content Overlay */}
-      <motion.div 
-        className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
-        initial={{ opacity: 1 }}
-        animate={{ opacity: isLoaded ? 0 : 1 }}
-        transition={{ duration: 0.4 }}
-      >
-        <span className="font-sora font-extrabold text-[64px] text-white inline-block leading-none mb-8">
-          <span className="logo-we">we</span>
-          <span className="logo-sparkle">✦</span>
-          <span className="logo-zon">zon</span>
-        </span>
-        
-        <div className="w-[200px] h-[2px] bg-white/20 relative overflow-hidden">
-          <div 
-            className="absolute top-0 left-0 h-full bg-white"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </motion.div>
-    </div>
+      <div className="w-[160px] h-[2px] bg-text/10 relative overflow-hidden rounded-full">
+        <div
+          className="absolute top-0 left-0 h-full bg-text rounded-full transition-[width] duration-100"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </motion.div>
   );
 }

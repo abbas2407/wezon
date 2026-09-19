@@ -1,113 +1,97 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useScramble } from '@/hooks/useScramble';
+import React from 'react';
+import { motion } from 'framer-motion';
 
 const services = [
-  { num: '01', title: 'UI/UX Design', desc: 'Research-backed interfaces for conversion.', tools: 'UX Research • Wireframing • Prototyping • Design Systems' },
-  { num: '02', title: 'Website Development', desc: 'Fast, SEO-optimized, pixel-perfect.', tools: 'Next.js • CMS • Animations • Performance Optimization' },
-  { num: '03', title: 'Web App Development', desc: 'Scalable apps, clean architecture.', tools: 'Dashboards • APIs • Auth • Real-time Features' },
-  { num: '04', title: 'Mobile App Development', desc: 'Native-grade performance, all devices.', tools: 'Flutter • iOS • Android • App Store Submission' },
-  { num: '05', title: 'Digital Media Marketing', desc: 'Community-first, algorithm-native.', tools: 'Content Calendar • Platform Management • Video Strategy' },
-  { num: '06', title: 'Performance Marketing', desc: 'Every rupee tracked, every campaign optimized.', tools: 'Google Ads • Meta Ads • CRO • Attribution' },
-  { num: '07', title: 'Graphic Design & Packaging', desc: 'Identities that command attention.', tools: 'Logo • Brand System • Packaging • Collateral' },
-  { num: '08', title: 'ERP / CRM / HRMS Development', desc: 'Enterprise platforms for operational excellence.', tools: 'Custom CRM • HRMS • ERP Modules • RBAC' },
-  { num: '09', title: 'Automation Tools & Agents', desc: 'Autonomous systems running your ops 24/7.', tools: 'LLM Agents • Workflow Automation • State Machine Architecture' },
+  {
+    num: '01',
+    title: 'Strategy',
+    desc: 'Business objectives, positioning, audience research and digital roadmap. A clear direction before a single pixel is placed.',
+  },
+  {
+    num: '02',
+    title: 'Brand',
+    desc: 'Identity systems, visual language and digital presence built for instant recognition and lasting trust.',
+  },
+  {
+    num: '03',
+    title: 'Product',
+    desc: 'Websites, applications, platforms and user experiences designed to convert visitors into customers.',
+  },
+  {
+    num: '04',
+    title: 'Technology',
+    desc: 'Custom software, ERP systems, integrations and intelligent automation that scales with your business.',
+  },
+  {
+    num: '05',
+    title: 'Growth',
+    desc: 'Performance marketing, acquisition funnels, optimization and analytics. Results that compound.',
+  },
 ];
 
-const ServiceRow = ({ service, isOpen, onClick }: { service: any, isOpen: boolean, onClick: () => void }) => {
-  const { text: scrambledNum, startScramble, stopScramble } = useScramble(service.num);
-
-  return (
-    <div 
-      className="group relative cursor-pointer"
-      data-cursor="hover"
-      onClick={onClick}
-      onMouseEnter={startScramble}
-      onMouseLeave={stopScramble}
-    >
-      <div className="absolute inset-0 bg-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      
-      <div className="relative px-6 md:px-12 py-8 flex flex-col md:flex-row md:items-center justify-between transition-transform duration-300 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:translate-x-[10px]">
-        <div className="flex items-center gap-8 md:gap-16">
-          <span className="font-sora font-semibold text-[24px] md:text-[32px] text-white/40 group-hover:text-white transition-colors w-[40px]">
-            {scrambledNum}.
-          </span>
-          <h3 className="font-sora font-bold text-[24px] md:text-[40px] text-white">
-            {service.title}
-          </h3>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.5, ease: [0.76, 0, 0.24, 1] }}
-            className="overflow-hidden relative px-6 md:px-12"
-          >
-            <div className="pb-8 md:pl-[120px]">
-              <p className="body-text text-white/70 mb-4">{service.desc}</p>
-              <p className="caption-text text-white/40 uppercase tracking-wider">{service.tools}</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="w-full h-[1px] bg-white/10 origin-left scale-x-0 transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:scale-x-100 absolute bottom-0 left-0" />
-      <div className="w-full h-[1px] bg-white/5 absolute bottom-0 left-0" />
-    </div>
-  );
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { duration: 0.7, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] },
+  }),
 };
 
 export function Services() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   return (
-    <section id="services" className="bg-black py-[120px] text-white overflow-hidden">
-      <div className="px-6 md:px-12 lg:px-[max(5vw,40px)] mb-16">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="label-text text-white/40 mb-6"
-        >
-          — WHAT WE DO
+    <section id="services" className="w-full bg-bg py-24 sm:py-32 lg:py-40">
+      <motion.div
+        className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+      >
+        {/* Section header */}
+        <motion.div className="flex items-center gap-3 mb-4" custom={0} variants={fadeUp}>
+          <div className="w-2 h-2 rounded-full bg-accent" />
+          <span className="font-body text-[13px] text-text-secondary uppercase tracking-[0.15em]">
+            What we do
+          </span>
         </motion.div>
-        
-        <motion.h2 
-          initial={{ y: 50, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-          className="font-sora font-extrabold text-[clamp(48px,6vw,80px)] text-white mb-6"
+
+        <motion.h2
+          className="font-display text-text max-w-[600px] mb-16 sm:mb-20"
+          custom={1}
+          variants={fadeUp}
         >
-          Our Services.
+          End-to-end capabilities for digital{' '}
+          <span className="font-serif italic">excellence</span>
         </motion.h2>
 
-        <motion.p 
-          initial={{ y: 30, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.76, 0, 0.24, 1] }}
-          className="body-text text-white/55 max-w-[500px]"
-        >
-          Full-stack intelligence — from pixel-perfect interfaces
-          to autonomous business systems.
-        </motion.p>
-      </div>
-
-      <div className="w-full border-t border-white/10">
-        {services.map((service, i) => (
-          <ServiceRow 
-            key={i} 
-            service={service} 
-            isOpen={openIndex === i} 
-            onClick={() => setOpenIndex(openIndex === i ? null : i)} 
-          />
-        ))}
-      </div>
+        {/* Service cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {services.map((service, i) => (
+            <motion.div
+              key={service.num}
+              className="group bg-card-bg border border-text/[0.06] rounded-2xl p-8 sm:p-10 flex flex-col justify-between min-h-[280px] hover:border-accent/40 transition-all duration-500 cursor-default"
+              custom={i + 2}
+              variants={fadeUp}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <span className="font-display text-[13px] text-text-secondary tracking-wide">{service.num}</span>
+                  <div className="w-8 h-8 rounded-full bg-accent/20 group-hover:bg-accent/40 transition-colors duration-500 flex items-center justify-center">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                      <path d="M3 11L11 3M11 3H5M11 3V9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" className="text-text" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="font-display text-[24px] sm:text-[28px] text-text leading-tight mb-4">
+                  {service.title}
+                </h3>
+              </div>
+              <p className="font-body text-[14px] leading-[1.7] text-text-secondary">
+                {service.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </section>
   );
 }
