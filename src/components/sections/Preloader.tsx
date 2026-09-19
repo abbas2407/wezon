@@ -10,23 +10,23 @@ export function Preloader({ onComplete }: PreloaderProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    let start = performance.now();
+    const start = Date.now();
     const duration = 2000;
 
-    const animateProgress = (time: number) => {
-      const elapsed = time - start;
+    const tick = () => {
+      const elapsed = Date.now() - start;
       const p = Math.min((elapsed / duration) * 100, 100);
       setProgress(p);
 
       if (p < 100) {
-        requestAnimationFrame(animateProgress);
+        setTimeout(tick, 16);
       } else {
         setIsLoaded(true);
         setTimeout(onComplete, 800);
       }
     };
 
-    requestAnimationFrame(animateProgress);
+    tick();
   }, [onComplete]);
 
   return (
