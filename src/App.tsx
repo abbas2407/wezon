@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Lenis from 'lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Preloader } from '@/components/sections/Preloader';
 import { Navbar } from '@/components/sections/Navbar';
 import { Hero } from '@/components/sections/Hero';
@@ -9,26 +10,16 @@ import { Process } from '@/components/sections/Process';
 import { Portfolio } from '@/components/sections/Portfolio';
 import { Footer } from '@/components/sections/Footer';
 
+gsap.registerPlugin(ScrollTrigger);
+
 function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.4,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-    });
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
+    if (!loading) {
+      ScrollTrigger.refresh();
     }
-    requestAnimationFrame(raf);
-
-    return () => lenis.destroy();
-  }, []);
+  }, [loading]);
 
   return (
     <>
