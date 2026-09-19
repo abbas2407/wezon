@@ -7,27 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        black: 'var(--black)',
-        white: 'var(--white)',
-        gray: {
-          100: 'var(--gray-100)',
-          200: 'var(--gray-200)',
-          500: 'var(--gray-500)',
-          700: 'var(--gray-700)',
-          800: 'var(--gray-800)',
-          900: 'var(--gray-900)',
-        },
-        border: {
-          dark: 'var(--border-dark)',
-          light: 'var(--border-light)',
-        }
+        bg: '#f9f9f9',
+        text: '#1a1918',
+        'text-secondary': '#6b6966',
+        accent: '#f1ff66',
+        'accent-dark': '#d4e052',
+        'card-bg': '#ffffff',
       },
       fontFamily: {
-        syne: ['Syne', 'sans-serif'],
-        sora: ['Syne', 'sans-serif'],
-        inter: ['Syne', 'sans-serif'],
-        orbitron: ['Orbitron', 'sans-serif'],
-        'space-grotesk': ['Space Grotesk', 'sans-serif'],
+        display: ['Outfit', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+        serif: ['Instrument Serif', 'serif'],
       },
     },
   },
