@@ -17,7 +17,12 @@ function App() {
 
   useEffect(() => {
     if (!loading) {
-      ScrollTrigger.refresh();
+      document.body.style.overflow = '';
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+      });
+    } else {
+      document.body.style.overflow = 'hidden';
     }
   }, [loading]);
 
@@ -25,25 +30,15 @@ function App() {
     <>
       {loading && <Preloader onComplete={() => setLoading(false)} />}
 
-      <div
-        className="w-full relative bg-bg origin-top transition-transform duration-[0.9s] ease-[cubic-bezier(0.76,0,0.24,1)]"
-        style={{
-          transform: loading ? 'scale(0.98)' : 'scale(1)',
-          pointerEvents: loading ? 'none' : 'auto',
-          height: loading ? '100vh' : 'auto',
-          overflow: loading ? 'hidden' : 'visible',
-        }}
-      >
-        <Navbar />
-        <main>
-          <Hero />
-          <About />
-          <Services />
-          <Process />
-          <Portfolio />
-        </main>
-        <Footer />
-      </div>
+      <Navbar />
+      <main>
+        <Hero />
+        <About />
+        <Services />
+        <Process />
+        <Portfolio />
+      </main>
+      <Footer />
     </>
   );
 }
