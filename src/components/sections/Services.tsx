@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -90,79 +90,70 @@ const fadeUp = {
 
 export function Services() {
   const pinRef = useRef<HTMLDivElement>(null);
-  const [ready, setReady] = useState(false);
+  const ctxRef = useRef<gsap.Context | null>(null);
 
   useEffect(() => {
-    const check = () => {
-      if (document.body.scrollHeight > window.innerHeight * 1.5) {
-        setReady(true);
-      } else {
-        setTimeout(check, 200);
-      }
-    };
-    check();
-  }, []);
-
-  useEffect(() => {
-    if (!ready) return;
     const pinContainer = pinRef.current;
     if (!pinContainer) return;
 
-    const cards = gsap.utils.toArray<HTMLElement>('.service-card', pinContainer);
-    const n = cards.length;
-    if (n === 0) return;
+    // Defer past React StrictMode's synchronous unmount/remount cycle
+    const timer = setTimeout(() => {
+      const cards = gsap.utils.toArray<HTMLElement>('.service-card', pinContainer);
+      const n = cards.length;
+      if (n === 0) return;
 
-    const cardH = cards[0].offsetHeight;
-    const gap = 12;
-    const headerH = 52;
-    const totalScrollDist = n * 380;
+      const headerH = 56;
 
-    const ctx = gsap.context(() => {
-      const masterTL = gsap.timeline({
-        scrollTrigger: {
-          trigger: pinContainer,
-          start: 'top top+=72',
-          end: `+=${totalScrollDist}`,
-          pin: true,
-          pinSpacing: true,
-          scrub: 0.4,
-          anticipatePin: 1,
-        },
-      });
+      ctxRef.current = gsap.context(() => {
+        const masterTL = gsap.timeline({
+          scrollTrigger: {
+            trigger: pinContainer,
+            start: 'top top+=72',
+            end: `+=${n * 380}`,
+            pin: true,
+            pinSpacing: true,
+            scrub: 0.5,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
 
-      cards.forEach((card, i) => {
-        if (i >= n - 1) return;
+        cards.forEach((card, i) => {
+          if (i >= n - 1) return;
+          masterTL.to(
+            card,
+            {
+              y: () => -(card.offsetTop - i * headerH),
+              scale: 1 - (n - 1 - i) * 0.02,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+              duration: 1,
+              ease: 'none',
+            },
+            i * 0.7
+          );
+        });
 
-        const targetY = -(card.offsetTop - (i * headerH));
-
+        const lastCard = cards[n - 1];
         masterTL.to(
-          card,
+          lastCard,
           {
-            y: targetY,
-            scale: 1 - (n - 1 - i) * 0.02,
-            boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+            y: () => -(lastCard.offsetTop - (n - 1) * headerH),
             duration: 1,
             ease: 'none',
           },
-          i * 0.7
+          (n - 2) * 0.7
         );
-      });
+      }, pinContainer);
+    }, 50);
 
-      const lastCard = cards[n - 1];
-      const lastTargetY = -(lastCard.offsetTop - ((n - 1) * headerH));
-      masterTL.to(
-        lastCard,
-        {
-          y: lastTargetY,
-          duration: 1,
-          ease: 'none',
-        },
-        (n - 2) * 0.7
-      );
-    }, pinContainer);
-
-    return () => ctx.revert();
-  }, [ready]);
+    return () => {
+      clearTimeout(timer);
+      if (ctxRef.current) {
+        ctxRef.current.revert();
+        ctxRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <section id="services" className="w-full bg-bg">
